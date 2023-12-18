@@ -10,9 +10,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller('api')
 export class AuthController {
@@ -20,22 +23,32 @@ export class AuthController {
 
   @Post('/register')
   async create(@Body() createUserDto: CreateUserDto) {
-   try {
-    createUserDto.createAt = new Date()
-    createUserDto.pictureProfile = ''
-    return await this.authService.createUser(createUserDto);
-   } catch (error) {
-    throw new ConflictException('User already exists')
-    
-   }
+      return await this.authService.createUser(createUserDto);
   }
 
   @Post('/login')
-  login(@Body() createUserDto: CreateUserDto) {
+  async login(@Body() createUserDto: CreateUserDto) {
+      const result = await this.authService.login(createUserDto);
+      return result;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/users')
+  findUser() {
+    const users = this.authService.findUser();
+    if (!users) {
+      throw new Error('Users not found');
+    }
+    return users;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/users/:id')
+  findByIdUser(@Param('id', ParseIntPipe) id: number) {
     try {
-      const user = this.authService.login(createUserDto);
+      const user = this.authService.findByIdUser(id);
       if (!user) {
-        throw new NotFoundException('Invalid credentials');
+        throw new NotFoundException('User Not Found');
       }
       return user;
     } catch (error) {
@@ -46,60 +59,40 @@ export class AuthController {
     }
   }
 
-  @Get('/users')
-  findUser() {
-    const users = this.authService.findUser();
-    if (!users) {
-      throw new Error('Users not found');
+  @UseGuards(AuthGuard)
+  @Delete('/users/:id')
+  deleteUser(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const user = this.authService.deleteUser(id);
+      if (!user) {
+        throw new NotFoundException('User Not Found');
+      }
+      return console.log('User deleted succefully');
+    } catch (error) {
+      return {
+        message: 'Internal server error',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
     }
-    return users;
   }
 
-  @Get('/users/:id')
-  findByIdUser(@Param('id', ParseIntPipe) id: number) {
+  @UseGuards(AuthGuard)
+  @Put('/users/:id')
+  modifyUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() createUserDto: CreateUserDto,
+  ) {
     try {
-      const user = this.authService.findByIdUser(id);
+      const user = this.authService.modifyUser(id, createUserDto);
       if (!user) {
         throw new NotFoundException('User Not Found');
       }
       return user;
     } catch (error) {
-        return {
-            message: 'Internal server error',
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          };
+      return {
+        message: 'Internal server error',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
     }
   }
-
-    @Delete('/users/:id')
-    deleteUser(@Param('id', ParseIntPipe) id: number) {
-      try {
-        const user = this.authService.deleteUser(id);
-        if (!user) {
-          throw new NotFoundException('User Not Found');
-        }
-        return console.log("User deleted succefully");
-      } catch (error) {
-        return {
-            message: 'Internal server error',
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          };
-      }
-    }
-
-    @Post('/users/:id')
-    modifyUser(@Param('id', ParseIntPipe) id: number, @Body() createUserDto: CreateUserDto) {
-      try {
-        const user =  this.authService.modifyUser(id, createUserDto);
-        if (!user) {
-          throw new NotFoundException('User Not Found');
-        }
-        return user
-      } catch (error) {
-        return {
-            message: 'Internal server error',
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          };
-      }
-    }
 }

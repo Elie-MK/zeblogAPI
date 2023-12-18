@@ -3,20 +3,26 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './auth/entities/user.entity';
+import { Users } from './auth/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ArticlesModule } from './articles/articles.module';
+import { CommentsModule } from './comments/comments.module';
+import { CategoriesModule } from './categories/categories.module';
+import { Articles } from './articles/entities/articles.entities';
+import { Comments } from './comments/entities/comments.entities';
+import { Categories } from './categories/entities/categories.entities';
 
 @Module({
   imports: [AuthModule, TypeOrmModule.forRoot({
     type:'postgres',
-    host:'', 
+    host:'localhost', 
     username:'postgres',
     port:5432, 
     password:'', 
     database:'', 
-    entities:[User],
+    entities:[Users, Articles, Comments, Categories],
     synchronize:true
-  }), ConfigModule.forRoot({isGlobal:true})],
+  }), ConfigModule.forRoot({isGlobal:true}), ArticlesModule, CommentsModule, CategoriesModule],
   controllers: [AppController],
   providers: [AppService],
 })
