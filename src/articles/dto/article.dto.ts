@@ -1,4 +1,6 @@
-import { IsString, MinLength } from "class-validator";
+import { IsArray, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { CreateUserDto } from "src/auth/dto/create-user.dto";
+import { Categories } from "src/categories/entities/categories.entities";
 
 export class ArticleDto {
 
@@ -10,8 +12,14 @@ export class ArticleDto {
     @MinLength(50)
     Content:string
 
-    @IsString()
-    Cat:string
+    @IsArray()
+    cats: any[]
+
+    @IsNotEmpty()
+    user:CreateUserDto
+
+    @IsArray()
+    comments:any[]
 
     @IsString()
     pictures:string

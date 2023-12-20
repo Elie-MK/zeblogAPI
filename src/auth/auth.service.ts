@@ -17,6 +17,7 @@ export class AuthService {
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
     private readonly jwtService: JwtService,
   ) {}
+ 
 
   async createUser(createUserDto: CreateUserDto): Promise<Users> {
     const findUser = await this.userRepository.findOne({
@@ -40,10 +41,14 @@ export class AuthService {
       const user = await this.userRepository.findOne({
         where: {
           username: createUserDto.username,
-        },
+        }, relations: ['articles'], 
       });
       if (user && bcrypt.compareSync(createUserDto.password, user.password)) {
-        const payload = { username: user.username, sub: user.idUser };
+        const payload = { idUser: user.idUser,
+          username: user.username,
+          email: user.email,
+          pictureProfile: user.pictureProfile,
+          createAt: user.createAt, articles:user.articles}
         return {
           access_token: this.jwtService.sign(payload),
         };
@@ -73,19 +78,30 @@ export class AuthService {
 
   async findByIdUser(id: number) {
     try {
-      const user = await this.userRepository.findOne({ where: { idUser: id } });
+      const user = await this.userRepository.findOne({
+        where: { idUser: id },
+        relations: ['articles'], 
+      });
+  
+
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+     
       const datasUser = {
-        id: user.idUser,
-        username: user.username,
-        email: user.email,
-        pictureProfile: user.pictureProfile,
-        createAt: user.createAt,
-      };
+        idUser: user.idUser,
+          username: user.username,
+          email: user.email,
+          pictureProfile: user.pictureProfile,
+          createAt: user.createAt, articles:user.articles
+      }
+
       return datasUser;
     } catch (error) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
+  
 
   async deleteUser(id: number) {
     try {

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ArticleDto } from './dto/article.dto';
@@ -9,7 +9,10 @@ export class ArticlesController {
 
     @UseGuards(AuthGuard)
     @Post('articles')
-    async createArticle(@Body() articleDto:ArticleDto){
+    async createArticle(@Body() articleDto:ArticleDto, @Request() req){
+        console.log(req.user);
+        
+        articleDto.user= req.user
         return await this.articleService.createArticle(articleDto)
     }
 }

@@ -11,11 +11,15 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
+import * as CircularJSON from 'circular-json';
+import { classToPlain } from 'class-transformer';
+
 
 @Controller('api')
 export class AuthController {
@@ -41,6 +45,7 @@ export class AuthController {
     }
     return users;
   }
+
 
   @UseGuards(AuthGuard)
   @Get('/users/:id')
@@ -95,4 +100,14 @@ export class AuthController {
       };
     }
   }
-}
+
+  @UseGuards(AuthGuard)
+  @Get('/profile')
+  getProfile(@Request() req){
+    const user = req.user
+    return classToPlain(user, { excludePrefixes: ['_'] });
+
+  }
+
+  
+  }

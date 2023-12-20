@@ -9,9 +9,9 @@ export class ArticlesService {
     constructor(@InjectRepository(Articles) private readonly articlesRepository:Repository<Articles> ){}
 
     async createArticle(articleDto: ArticleDto){
+        
+        // articleDto.user =  req.user.id
         const article =  this.articlesRepository.create(articleDto)
-        console.log(articleDto)
-    
         await this.articlesRepository.save(article)
         return article
     }

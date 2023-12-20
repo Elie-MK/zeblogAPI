@@ -36,8 +36,8 @@ export class Articles {
   user: Users;
 
   @OneToMany(() => Comments, (com) => com)
-  comments: Comments;
+  comments: Comments[];
 
   @ManyToMany(()=>Categories, (cat) => cat)
-  cats:Categories
+  cats:Categories[]
 }
