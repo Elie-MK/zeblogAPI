@@ -14,7 +14,7 @@ import {
 @Entity()
 export class Articles {
   @PrimaryGeneratedColumn()
-  idArticles: string;
+  idArticles: number;
 
   @Column({type:'varchar'})
   Title: string;

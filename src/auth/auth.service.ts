@@ -41,7 +41,8 @@ export class AuthService {
       const user = await this.userRepository.findOne({
         where: {
           username: createUserDto.username,
-        }, relations: ['articles'], 
+        }, 
+        relations: ['articles'],  
       });
       if (user && bcrypt.compareSync(createUserDto.password, user.password)) {
         const payload = { idUser: user.idUser,

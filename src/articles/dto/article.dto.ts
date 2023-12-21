@@ -6,13 +6,16 @@ export class ArticleDto {
 
     @IsString()
     @MinLength(5)
+    @IsNotEmpty()
     Title:string
 
     @IsString()
     @MinLength(50)
+    @IsNotEmpty()
     Content:string
 
     @IsArray()
+    @IsNotEmpty()
     cats: any[]
 
     @IsNotEmpty()
