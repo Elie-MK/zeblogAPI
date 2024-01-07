@@ -18,8 +18,8 @@ import { Categories } from './categories/entities/categories.entities';
     host:'localhost', 
     username:'postgres',
     port:5432, 
-    password:'', 
-    database:'', 
+    password:'kinshasa', 
+    database:'zeblog', 
     entities:[Users, Articles, Comments, Categories],
     synchronize:true
   }), ConfigModule.forRoot({isGlobal:true}), ArticlesModule, CommentsModule, CategoriesModule],

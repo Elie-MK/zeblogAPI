@@ -38,7 +38,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('/users')
-  findUser() {
+  async findUser() {
     const users = this.authService.findUser();
     if (!users) {
       throw new Error('Users not found');
@@ -49,7 +49,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('/users/:id')
-  findByIdUser(@Param('id', ParseIntPipe) id: number) {
+  async findByIdUser(@Param('id', ParseIntPipe) id: number) {
     try {
       const user = this.authService.findByIdUser(id);
       if (!user) {
@@ -66,7 +66,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Delete('/users/:id')
-  deleteUser(@Param('id', ParseIntPipe) id: number) {
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
     try {
       const user = this.authService.deleteUser(id);
       if (!user) {
@@ -83,7 +83,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Put('/users/:id')
-  modifyUser(
+  async modifyUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() createUserDto: CreateUserDto,
   ) {
@@ -103,11 +103,25 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('/profile')
-  getProfile(@Request() req){
+  async getProfile(@Request() req){
     const user = req.user
     return classToPlain(user, { excludePrefixes: ['_'] });
 
   }
 
-  
+  @UseGuards(AuthGuard)
+  @Put('/profile')
+ async modifyProfile(@Request() req, @Body() createUserDto: CreateUserDto, ){
+    const user = req.user
+    const result = this.authService.modifyCurrentUser( user.idUser, createUserDto)
+    return result
   }
+
+  @UseGuards(AuthGuard)
+  @Put('/profile/password')
+  async modifyPassword(@Request() req, @Body() createUserDto: CreateUserDto, ){
+    const user = req.user
+    const result = this.authService.modifyPassword( user.idUser, createUserDto)
+    return result
+  }
+}

@@ -18,35 +18,32 @@ export class ArticlesService {
   ) {}
 
   async createArticle(articleDto: ArticleDto) {
-    try {
       const article = this.articlesRepository.create(articleDto);
       await this.articlesRepository.save(article);
       return article;
-    } catch (error) {
-      throw new BadRequestException('Error article not publish');
-    }
   }
+
   async findAllArticlesWithUsers() {
-    try {
+ 
       const articleWithUser = await this.articlesRepository.find({
         relations: ['user'],
       });
 
-      const dataUser = articleWithUser.map(({ user, ...rest }) => ({
-        ...rest,
-        user: {
-          idUser: user.idUser,
-          username: user.username,
-          email: user.email,
-          pictureProfile: user.pictureProfile,
-          createAt: user.createAt,
-        },
-      }));
-
-      return dataUser;
-    } catch (error) {
-      throw new NotFoundException('Articles not found');
-    }
+      if(articleWithUser){
+        const dataUser = articleWithUser.map(({ user, ...rest }) => ({
+          ...rest,
+          user: {
+            idUser: user.idUser,
+            username: user.username,
+            email: user.email,
+            pictureProfile: user.pictureProfile,
+            createAt: user.createAt,
+          },
+        }));
+  
+        return dataUser;
+      }
+  
   }
 
   async findArticleByUser(req) {
@@ -80,12 +77,13 @@ export class ArticlesService {
   }
 
   async findArticleById(id: number) {
-    try {
       const article = await this.articlesRepository.findOne({
         where: { idArticles: id },
-        relations: ['user'],
+        relations: ['user', 'comments'],
       });
+      
       if (article) {
+     
         const data = {
           ...article,
           user: {
@@ -100,10 +98,22 @@ export class ArticlesService {
       } else {
         throw new BadRequestException('Article not found');
       }
-    } catch (error) {
-      throw new NotFoundException('Article not found');
-    }
+   
   }
+
+  // async findArticleByIdWithComments (id: number){
+  //   try {
+  //     const article = await this.articlesRepository.findOne({
+  //       where: { idArticles: id },
+  //       relations: ['comment'],
+  //     });
+
+  //     return article
+  //   } catch (error) {
+      
+  //   }
+  // }
+
 
   async modifyArticle(id: number, articleDto: ArticleDto, req) {
     const article = await this.articlesRepository.findOne({

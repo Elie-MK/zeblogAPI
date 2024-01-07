@@ -1,8 +1,11 @@
-import { IsArray, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
 import { CreateUserDto } from "src/auth/dto/create-user.dto";
 import { Categories } from "src/categories/entities/categories.entities";
+import { CommentDto } from "src/comments/dto/commentDto";
 
 export class ArticleDto {
+    @IsNumber()
+    idArticles
 
     @IsString()
     @MinLength(5)
@@ -22,7 +25,7 @@ export class ArticleDto {
     user:CreateUserDto
 
     @IsArray()
-    comments:any[]
+    comments:CommentDto[]
 
     @IsString()
     pictures:string

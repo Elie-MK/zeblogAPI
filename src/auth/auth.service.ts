@@ -29,6 +29,7 @@ export class AuthService {
       const salt = bcrypt.genSaltSync();
       createUserDto.password = bcrypt.hashSync(createUserDto.password, salt);
       createUserDto.pictureProfile = '';
+      createUserDto.email.toLocaleLowerCase()
       const user = this.userRepository.create(createUserDto);
       return await this.userRepository.save(user);
     } else {
@@ -44,6 +45,7 @@ export class AuthService {
         }, 
         relations: ['articles'],  
       });
+     
       if (user && bcrypt.compareSync(createUserDto.password, user.password)) {
         const payload = { idUser: user.idUser,
           username: user.username,
@@ -54,10 +56,10 @@ export class AuthService {
           access_token: this.jwtService.sign(payload),
         };
       } else {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new NotFoundException('User not exist');
       }
     } catch (error) {
-      throw new NotFoundException('User not exist');
+      throw new NotFoundException('Wrong password or Username');
     }
   }
 
@@ -123,7 +125,41 @@ export class AuthService {
     }
     return await this.userRepository.update(id, createUserDto);
   }
-  // async findUserByEmail(email:string):Promise<User>{
-  //     return await this.userRepository.findOne({where:{email}});
-  // }
+
+  async modifyCurrentUser(reqId, createUserDto: CreateUserDto){
+   try {
+    const userFind = await this.userRepository.findOne({ where: { idUser: reqId } });
+    if (userFind) {
+      const dataUser = {
+        username: createUserDto.username,
+        email: createUserDto.email,
+      }
+      
+      return await this.userRepository.update( reqId, dataUser);
+    }else{
+      throw new NotFoundException(`User with ID ${reqId} not found`);
+    }
+   } catch (error) {
+    console.log(error.message);
+    
+   }
+  }
+
+  async modifyPassword(reqId, createUserDto: CreateUserDto){
+    try {
+      const userFind = await this.userRepository.findOne({ where: { idUser: reqId } });
+
+      if(userFind){
+        const salt = bcrypt.genSaltSync();
+        const dataUser = {
+          password: bcrypt.hashSync(createUserDto.password, salt),
+        }
+        
+        return await this.userRepository.update( reqId, dataUser);
+      }
+    } catch (error) {
+      
+    }
+  }
+ 
 }

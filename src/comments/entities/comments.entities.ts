@@ -1,6 +1,6 @@
 import { Articles } from "src/articles/entities/articles.entities";
 import { Users } from "src/auth/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 @Entity()
 export class Comments {

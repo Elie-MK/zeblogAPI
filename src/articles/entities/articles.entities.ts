@@ -35,7 +35,8 @@ export class Articles {
   @JoinColumn({ name: 'idUser' }) 
   user: Users;
 
-  @OneToMany(() => Comments, (com) => com)
+  @OneToMany(() => Comments, (com) => com.articles)
+  @JoinColumn({ name: 'idComments' }) 
   comments: Comments[];
 
   @ManyToMany(()=>Categories, (cat) => cat)

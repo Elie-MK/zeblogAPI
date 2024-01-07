@@ -46,4 +46,10 @@ export class ArticlesController {
         const user = req.user
         return await this.articleService.findArticleByUser(user)
     }
+
+    // @UseGuards(AuthGuard)
+    // @Get('articles/comments/:id')
+    // async findArticleByIdWithComments(@Param('id', ParseIntPipe) id:number){
+    //     return await this.articleService.findArticleByIdWithComments(id)
+    // }
 }
