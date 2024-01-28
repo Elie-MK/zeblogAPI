@@ -17,6 +17,9 @@ export class Users {
   @Column({ type: 'varchar'})
   password: string;
 
+  @Column({ type: 'varchar'})
+  gender: string;
+
   @Column({ type: 'varchar', nullable:false  })
   pictureProfile: string;
   

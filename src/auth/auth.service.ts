@@ -17,7 +17,6 @@ export class AuthService {
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
     private readonly jwtService: JwtService,
   ) {}
- 
 
   async createUser(createUserDto: CreateUserDto): Promise<Users> {
     const findUser = await this.userRepository.findOne({
@@ -29,7 +28,7 @@ export class AuthService {
       const salt = bcrypt.genSaltSync();
       createUserDto.password = bcrypt.hashSync(createUserDto.password, salt);
       createUserDto.pictureProfile = '';
-      createUserDto.email.toLocaleLowerCase()
+      createUserDto.email.toLocaleLowerCase();
       const user = this.userRepository.create(createUserDto);
       return await this.userRepository.save(user);
     } else {
@@ -42,16 +41,20 @@ export class AuthService {
       const user = await this.userRepository.findOne({
         where: {
           username: createUserDto.username,
-        }, 
-        relations: ['articles'],  
+        },
+        relations: ['articles'],
       });
-     
+
       if (user && bcrypt.compareSync(createUserDto.password, user.password)) {
-        const payload = { idUser: user.idUser,
+        const payload = {
+          idUser: user.idUser,
           username: user.username,
           email: user.email,
+          gender: user.gender,
           pictureProfile: user.pictureProfile,
-          createAt: user.createAt, articles:user.articles}
+          createAt: user.createAt,
+          articles: user.articles,
+        };
         return {
           access_token: this.jwtService.sign(payload),
         };
@@ -69,6 +72,7 @@ export class AuthService {
       const sanitizedUsers = users.map((user) => ({
         id: user.idUser,
         username: user.username,
+        gender: user.gender,
         email: user.email,
         pictureProfile: user.pictureProfile,
         createAt: user.createAt,
@@ -83,28 +87,28 @@ export class AuthService {
     try {
       const user = await this.userRepository.findOne({
         where: { idUser: id },
-        relations: ['articles'], 
+        relations: ['articles'],
       });
-  
 
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found`);
       }
-     
+
       const datasUser = {
         idUser: user.idUser,
-          username: user.username,
-          email: user.email,
-          pictureProfile: user.pictureProfile,
-          createAt: user.createAt, articles:user.articles
-      }
+        username: user.username,
+        email: user.email,
+        gender: user.gender,
+        pictureProfile: user.pictureProfile,
+        createAt: user.createAt,
+        articles: user.articles,
+      };
 
       return datasUser;
     } catch (error) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
-  
 
   async deleteUser(id: number) {
     try {
@@ -126,40 +130,40 @@ export class AuthService {
     return await this.userRepository.update(id, createUserDto);
   }
 
-  async modifyCurrentUser(reqId, createUserDto: CreateUserDto){
-   try {
-    const userFind = await this.userRepository.findOne({ where: { idUser: reqId } });
-    if (userFind) {
-      const dataUser = {
-        username: createUserDto.username,
-        email: createUserDto.email,
+  async modifyCurrentUser(reqId, createUserDto: CreateUserDto) {
+    try {
+      const userFind = await this.userRepository.findOne({
+        where: { idUser: reqId },
+      });
+      if (userFind) {
+        const dataUser = {
+          username: createUserDto.username,
+          email: createUserDto.email,
+        };
+
+        return await this.userRepository.update(reqId, dataUser);
+      } else {
+        throw new NotFoundException(`User with ID ${reqId} not found`);
       }
-      
-      return await this.userRepository.update( reqId, dataUser);
-    }else{
-      throw new NotFoundException(`User with ID ${reqId} not found`);
+    } catch (error) {
+      console.log(error.message);
     }
-   } catch (error) {
-    console.log(error.message);
-    
-   }
   }
 
-  async modifyPassword(reqId, createUserDto: CreateUserDto){
+  async modifyPassword(reqId, createUserDto: CreateUserDto) {
     try {
-      const userFind = await this.userRepository.findOne({ where: { idUser: reqId } });
+      const userFind = await this.userRepository.findOne({
+        where: { idUser: reqId },
+      });
 
-      if(userFind){
+      if (userFind) {
         const salt = bcrypt.genSaltSync();
         const dataUser = {
           password: bcrypt.hashSync(createUserDto.password, salt),
-        }
-        
-        return await this.userRepository.update( reqId, dataUser);
+        };
+
+        return await this.userRepository.update(reqId, dataUser);
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }
- 
 }

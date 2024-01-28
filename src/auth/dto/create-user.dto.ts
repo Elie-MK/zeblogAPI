@@ -2,7 +2,6 @@ import { Exclude } from 'class-transformer';
 import {
   IsAlphanumeric,
   IsArray,
-  IsBoolean,
   IsDate,
   IsEmail,
   IsInt,
@@ -43,6 +42,9 @@ export class CreateUserDto {
 
   @IsString()
   pictureProfile: string;
+
+  @IsString()
+  gender:string; 
 
   @IsArray()
   articles: ArticleDto[];
