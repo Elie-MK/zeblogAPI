@@ -1,16 +1,27 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { categoriesDto } from './dto/categories.dto';
 
-@Controller('api/')
+@Controller('api')
 export class CategoriesController {
-    constructor(private readonly categorieService:CategoriesService ){}
-
+    constructor(private readonly  categoriesService: CategoriesService) {} 
 
     @Post('categories')
-    async createCategory(@Body() categorieDto:categoriesDto){
-        
-        
-        return await this.categorieService.createCategory(categorieDto)
+    async saveEnumCategorie(){
+        try {
+            return this.categoriesService.saveEnumCategorie();
+        } catch (error) {
+            console.log(error);
+            return error;
+        }
+    }
+
+    @Get('categories')
+    async findAll(){
+        try {
+            return this.categoriesService.findAll();
+        } catch (error) {
+            console.log(error);
+            return error;
+        }
     }
 }

@@ -1,11 +1,10 @@
 import { Users } from 'src/auth/entities/user.entity';
-import { Categories } from 'src/categories/entities/categories.entities';
+import { Categories } from 'src/categories/entities/categorie.entitie';
 import { Comments } from 'src/comments/entities/comments.entities';
 import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -26,9 +25,6 @@ export class Articles {
   CreateAt: Date;
 
   @Column({type:'varchar'})
-  Cat: string;
-
-  @Column({type:'varchar'})
   pictures:string
 
   @ManyToOne(() => Users, (user) => user.articles)
@@ -39,6 +35,7 @@ export class Articles {
   @JoinColumn({ name: 'idComments' }) 
   comments: Comments[];
 
-  @ManyToMany(()=>Categories, (cat) => cat)
-  cats:Categories[]
+  @ManyToOne(()=>Categories, (cat) => cat.articles)
+  @JoinColumn({ name: 'idCat' }) 
+  categories:Categories
 }

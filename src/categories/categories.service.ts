@@ -1,39 +1,24 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Categories } from './entities/categories.entities';
+import { Categories } from './entities/categorie.entitie';
 import { Repository } from 'typeorm';
-import { categoriesDto } from './dto/categories.dto';
-import { throws } from 'assert';
+import { CategorieEnum } from './enum/categorieEnum';
 
 @Injectable()
 export class CategoriesService {
-  constructor(
-    @InjectRepository(Categories)
-    private readonly categorieRepository: Repository<Categories>,
-  ) {}
+    constructor(@InjectRepository(Categories) private readonly categories:Repository<Categories> ) {}
 
-  async createCategory(categorieDto: categoriesDto) {
-    const existingCategory = await this.categorieRepository.findOne({
-        where: { nameCat: categorieDto.nameCat },
-    });
-    
-    
-    
-    if (!existingCategory) {
-        const newCategory = this.categorieRepository.create(categorieDto);
-        const savedCategory = await this.categorieRepository.save(newCategory);
-        return savedCategory;
-    } else {
-        throw new ConflictException(`This category already exists`);
+    async saveEnumCategorie(){
+        const categories = Object.values(CategorieEnum).map((name) => {
+            const categorie = new Categories();
+            categorie.name = name;
+            return categorie;
+        });
+
+        await this.categories.save(categories);
     }
-}
 
-
-async getAllCategories() {
-    return await this.categorieRepository.find();
-}
+    async findAll(){
+        return this.categories.find();
+    }
 }

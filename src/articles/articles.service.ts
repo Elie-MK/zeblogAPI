@@ -9,41 +9,53 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Articles } from './entities/articles.entities';
 import { Repository } from 'typeorm';
 import { ArticleDto } from './dto/article.dto';
+import { CategoriesDto } from 'src/categories/dtos/categoriesDto';
+import { Categories } from 'src/categories/entities/categorie.entitie';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
+    @InjectRepository(Categories)
+    private readonly categoriesRepository: Repository<Categories>,
   ) {}
 
   async createArticle(articleDto: ArticleDto) {
-      const article = this.articlesRepository.create(articleDto);
-      await this.articlesRepository.save(article);
-      return article;
+    const { categories } = articleDto;
+    const category = await this.categoriesRepository.findOne({
+      where: { idCat: categories.idCat},
+    });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    const article = this.articlesRepository.create({
+      ...articleDto,
+      categories: category,
+    });
+    await this.articlesRepository.save(article);
+    return article;
   }
 
   async findAllArticlesWithUsers() {
- 
-      const articleWithUser = await this.articlesRepository.find({
-        relations: ['user'],
-      });
+    const articleWithUser = await this.articlesRepository.find({
+      relations: ['user'],
+    });
 
-      if(articleWithUser){
-        const dataUser = articleWithUser.map(({ user, ...rest }) => ({
-          ...rest,
-          user: {
-            idUser: user.idUser,
-            username: user.username,
-            email: user.email,
-            pictureProfile: user.pictureProfile,
-            createAt: user.createAt,
-          },
-        }));
-  
-        return dataUser;
-      }
-  
+    if (articleWithUser) {
+      const dataUser = articleWithUser.map(({ user, ...rest }) => ({
+        ...rest,
+        user: {
+          idUser: user.idUser,
+          username: user.username,
+          email: user.email,
+          pictureProfile: user.pictureProfile,
+          createAt: user.createAt,
+        },
+      }));
+
+      return dataUser;
+    }
   }
 
   async findArticleByUser(req) {
@@ -66,7 +78,7 @@ export class ArticlesService {
             pictureProfile: user.pictureProfile,
             createAt: user.createAt,
           },
-        }))
+        }));
         return articleWithUser;
       } else {
         throw new BadRequestException('Article not found');
@@ -77,28 +89,26 @@ export class ArticlesService {
   }
 
   async findArticleById(id: number) {
-      const article = await this.articlesRepository.findOne({
-        where: { idArticles: id },
-        relations: ['user', 'comments'],
-      });
-      
-      if (article) {
-     
-        const data = {
-          ...article,
-          user: {
-            idUser: article.user.idUser,
-            username: article.user.username,
-            email: article.user.email,
-            pictureProfile: article.user.pictureProfile,
-            createAt: article.user.createAt,
-          },
-        };
-        return data;
-      } else {
-        throw new BadRequestException('Article not found');
-      }
-   
+    const article = await this.articlesRepository.findOne({
+      where: { idArticles: id },
+      relations: ['user', 'comments'],
+    });
+
+    if (article) {
+      const data = {
+        ...article,
+        user: {
+          idUser: article.user.idUser,
+          username: article.user.username,
+          email: article.user.email,
+          pictureProfile: article.user.pictureProfile,
+          createAt: article.user.createAt,
+        },
+      };
+      return data;
+    } else {
+      throw new BadRequestException('Article not found');
+    }
   }
 
   // async findArticleByIdWithComments (id: number){
@@ -110,10 +120,9 @@ export class ArticlesService {
 
   //     return article
   //   } catch (error) {
-      
+
   //   }
   // }
-
 
   async modifyArticle(id: number, articleDto: ArticleDto, req) {
     const article = await this.articlesRepository.findOne({
