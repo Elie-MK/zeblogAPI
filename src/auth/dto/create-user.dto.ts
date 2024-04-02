@@ -11,6 +11,8 @@ import {
   MinLength,
 } from 'class-validator';
 import { ArticleDto } from 'src/articles/dto/article.dto';
+import { GenderEnum } from '../entities/user.entity';
+import { LikeEnum } from 'src/likes/entities/likes.entity';
 
 const passwordRegEx =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,20}$/;
@@ -18,6 +20,21 @@ const passwordRegEx =
 export class CreateUserDto {
   @IsInt()
   idUser: number;
+  
+  @IsNotEmpty()
+  @MinLength(4)
+  @IsString()
+  fullName: string;
+  
+  @IsDate()
+  dateOfBirth: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  countryName: string;
+
+  @IsString()
+  streetAdress: string;
 
   @MinLength(3, { message: 'Name must have atleast 3 characters.' })
   @IsNotEmpty()
@@ -44,11 +61,12 @@ export class CreateUserDto {
   pictureProfile: string;
 
   @IsString()
-  gender:string; 
+  gender:GenderEnum
 
   @IsArray()
   articles: ArticleDto[];
 
   @IsDate()
   createAt: Date;
+
 }
