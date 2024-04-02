@@ -15,10 +15,8 @@ export class Comments {
     createAt: Date;
     
     @ManyToOne(() => Users, user => user.comments) 
-    @JoinColumn({ name: 'idUser' }) 
     idUser:Users
 
     @ManyToOne(() => Articles, art => art.comments)
-    @JoinColumn({name:'idArticles'})
     articles:Articles
 }

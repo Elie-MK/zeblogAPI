@@ -9,37 +9,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Articles } from './entities/articles.entities';
 import { Repository } from 'typeorm';
 import { ArticleDto } from './dto/article.dto';
-import { CategoriesDto } from 'src/categories/dtos/categoriesDto';
-import { Categories } from 'src/categories/entities/categorie.entitie';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
-    @InjectRepository(Categories)
-    private readonly categoriesRepository: Repository<Categories>,
+  
   ) {}
 
   async createArticle(articleDto: ArticleDto) {
-    const { categories } = articleDto;
-    const category = await this.categoriesRepository.findOne({
-      where: { idCat: categories.idCat},
-    });
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
-    const article = this.articlesRepository.create({
-      ...articleDto,
-      categories: category,
-    });
+ 
+    const article = this.articlesRepository.create(
+     articleDto
+    );
     await this.articlesRepository.save(article);
     return article;
   }
 
   async findAllArticlesWithUsers() {
     const articleWithUser = await this.articlesRepository.find({
-      relations: ['user'],
+      relations: ['user', 'comments', 'likes'],
     });
 
     if (articleWithUser) {
@@ -51,6 +41,7 @@ export class ArticlesService {
           email: user.email,
           pictureProfile: user.pictureProfile,
           createAt: user.createAt,
+          
         },
       }));
 
@@ -91,7 +82,7 @@ export class ArticlesService {
   async findArticleById(id: number) {
     const article = await this.articlesRepository.findOne({
       where: { idArticles: id },
-      relations: ['user', 'comments'],
+      relations: ['user', 'comments', 'likes'],
     });
 
     if (article) {

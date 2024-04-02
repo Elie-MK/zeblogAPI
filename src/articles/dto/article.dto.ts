@@ -1,7 +1,8 @@
 import { IsArray, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
 import { CreateUserDto } from "src/auth/dto/create-user.dto";
-import { CategoriesDto } from "src/categories/dtos/categoriesDto";
 import { CommentDto } from "src/comments/dto/commentDto";
+import { LikeEnum } from "src/likes/entities/likes.entity";
+import { CategorieEnum } from "../Enums/CategorieEnum";
 
 export class ArticleDto {
     @IsNumber()
@@ -17,9 +18,6 @@ export class ArticleDto {
     @IsNotEmpty()
     Content:string
 
-    @IsArray()
-    categories: CategoriesDto
-
     @IsNotEmpty()
     user:CreateUserDto
 
@@ -28,4 +26,6 @@ export class ArticleDto {
 
     @IsString()
     pictures:string
+
+    category:CategorieEnum
 }

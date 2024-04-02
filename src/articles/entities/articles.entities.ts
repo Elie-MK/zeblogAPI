@@ -1,6 +1,6 @@
 import { Users } from 'src/auth/entities/user.entity';
-import { Categories } from 'src/categories/entities/categorie.entitie';
 import { Comments } from 'src/comments/entities/comments.entities';
+import { LikeEnum, Likes } from 'src/likes/entities/likes.entity';
 import {
   Column,
   Entity,
@@ -9,6 +9,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CategorieEnum } from '../Enums/CategorieEnum';
+
 
 @Entity()
 export class Articles {
@@ -28,14 +30,14 @@ export class Articles {
   pictures:string
 
   @ManyToOne(() => Users, (user) => user.articles)
-  @JoinColumn({ name: 'idUser' }) 
   user: Users;
 
   @OneToMany(() => Comments, (com) => com.articles)
-  @JoinColumn({ name: 'idComments' }) 
   comments: Comments[];
 
-  @ManyToOne(()=>Categories, (cat) => cat.articles)
-  @JoinColumn({ name: 'idCat' }) 
-  categories:Categories
+  @Column({type:"enum", enum:CategorieEnum, default:CategorieEnum.NONE})
+  category:CategorieEnum
+
+  @OneToMany(()=>Likes, (like) => like.article)
+  likes : Likes[]
 }
