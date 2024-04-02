@@ -1,6 +1,5 @@
 import {
   Body,
-  ConflictException,
   Controller,
   Delete,
   Get,
@@ -19,7 +18,6 @@ import {
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
-import * as CircularJSON from 'circular-json';
 import { classToPlain } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';

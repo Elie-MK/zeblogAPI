@@ -1,7 +1,7 @@
 import { Articles } from 'src/articles/entities/articles.entities';
 import { Comments } from 'src/comments/entities/comments.entities';
 import { Likes } from 'src/likes/entities/likes.entity';
-import { Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
 
 export enum GenderEnum {
   MALE = "male",
