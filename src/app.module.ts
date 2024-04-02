@@ -9,10 +9,9 @@ import { ArticlesModule } from './articles/articles.module';
 import { CommentsModule } from './comments/comments.module';
 import { Articles } from './articles/entities/articles.entities';
 import { Comments } from './comments/entities/comments.entities';
-import { CategoriesController } from './categories/categories.controller';
-import { CategoriesService } from './categories/categories.service';
-import { CategoriesModule } from './categories/categories.module';
-import { Categories } from './categories/entities/categorie.entitie';
+import { LikesModule } from './likes/likes.module';
+import { Likes } from './likes/entities/likes.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -24,13 +23,14 @@ import { Categories } from './categories/entities/categorie.entitie';
       port: 5432,
       password: 'kinshasa',
       database: 'zeblog',
-      entities: [Users, Articles, Comments, Categories],
+      entities: [Users, Articles, Comments, Likes],
       synchronize: true,
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     ArticlesModule,
     CommentsModule,
-    CategoriesModule,
+    LikesModule,
+    MulterModule.register({ dest: './uploads' }),
   ],
   controllers: [AppController],
   providers: [AppService],
