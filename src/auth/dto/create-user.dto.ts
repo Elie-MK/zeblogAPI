@@ -12,29 +12,36 @@ import {
 import { ArticleDto } from 'src/articles/dto/article.dto';
 import { GenderEnum } from '../entities/user.entity';
 import { LikeEnum } from 'src/likes/entities/likes.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 const passwordRegEx =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,20}$/;
 
 export class CreateUserDto {
+  @ApiProperty()
   @IsInt()
   idUser: number;
-  
+
+  @ApiProperty()
   @IsNotEmpty()
   @MinLength(4)
   @IsString()
   fullName: string;
   
+  @ApiProperty()
   @IsDate()
   dateOfBirth: Date;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   countryName: string;
 
+  @ApiProperty()
   @IsString()
   streetAdress: string;
 
+  @ApiProperty()
   @MinLength(3, { message: 'Name must have atleast 3 characters.' })
   @IsNotEmpty()
   @IsAlphanumeric(null, {
@@ -42,10 +49,12 @@ export class CreateUserDto {
   })
   username: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @IsEmail(null, { message: 'Please provide valid Email.' })
   email: string;
 
+  @ApiProperty()
   @IsNotEmpty()
   @Matches(passwordRegEx, {
     message: `Password must contain Minimum 8 and maximum 20 characters, 
@@ -56,15 +65,19 @@ export class CreateUserDto {
   })
   password: string;
 
+  @ApiProperty()
   @IsString()
   pictureProfile: string;
 
+  @ApiProperty()
   @IsString()
   gender:GenderEnum
 
+  @ApiProperty()
   @IsArray()
   articles: ArticleDto[];
-
+  
+  @ApiProperty()
   @IsDate()
   createAt: Date;
 
