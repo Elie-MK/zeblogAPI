@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Articles } from 'src/articles/entities/articles.entities';
-import { Comments } from 'src/comments/entities/comments.entities';
+import { Articles } from 'src/articles/entities/articles.entity';
+import { Comments } from 'src/comments/entities/comments.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
 

@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Articles } from './entities/articles.entities';
+import { Articles } from './entities/articles.entity';
 import { Repository } from 'typeorm';
 import { ArticleDto } from './dto/article.dto';
 

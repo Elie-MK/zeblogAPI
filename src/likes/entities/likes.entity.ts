@@ -1,4 +1,4 @@
-import { Articles } from "src/articles/entities/articles.entities";
+import { Articles } from "src/articles/entities/articles.entity";
 import { Users } from "src/auth/entities/user.entity";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique, ManyToOne, JoinColumn } from "typeorm";
 

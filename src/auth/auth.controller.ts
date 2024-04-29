@@ -26,7 +26,7 @@ import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Users } from './entities/user.entity';
 
 @ApiTags('User')
-@Controller('user')
+@Controller('api')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

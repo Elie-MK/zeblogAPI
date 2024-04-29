@@ -10,40 +10,40 @@ export class ArticlesController {
     constructor(private readonly articleService:ArticlesService){}
 
     @UseGuards(AuthGuard)
-    @Post('create')
+    @Post('/create')
     async createArticle(@Body() articleDto:ArticleDto, @Request() req){
         articleDto.user= req.user
         return await this.articleService.createArticle(articleDto)
     }
 
     @UseGuards(AuthGuard)
-    @Put('articles/:id')
+    @Put('/:id')
     async modifyArticle(@Param('id', ParseIntPipe) id:number, @Body() articleDto:ArticleDto, @Request() req){
        const user = req.user
         return await this.articleService.modifyArticle(id, articleDto, user)
     }
 
     @UseGuards(AuthGuard)
-    @Delete('articles/:id')
+    @Delete('/:id')
     async deleteArticle(@Param('id', ParseIntPipe) id:number,  @Request() req){
         const user = req.user
         return await this.articleService.deleteArticle(id, user)
     }
 
     @UseGuards(AuthGuard)
-    @Get('articles')
+    @Get('/all')
     async findAllArticle(){
         return this.articleService.findAllArticlesWithUsers()
     }
 
     @UseGuards(AuthGuard)
-    @Get('articles/:id')
+    @Get('/:id')
     async findArticleById(@Param('id', ParseIntPipe) id:number){
         return await this.articleService.findArticleById(id)
     }
     
     @UseGuards(AuthGuard)
-    @Get('user/articles')
+    @Get('/user/articles')
     async findArticleByUser(@Request() req){
         const user = req.user
         return await this.articleService.findArticleByUser(user)

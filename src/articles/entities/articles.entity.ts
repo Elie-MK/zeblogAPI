@@ -1,5 +1,5 @@
 import { Users } from 'src/auth/entities/user.entity';
-import { Comments } from 'src/comments/entities/comments.entities';
+import { Comments } from 'src/comments/entities/comments.entity';
 import { LikeEnum, Likes } from 'src/likes/entities/likes.entity';
 import {
   Column,
