@@ -9,10 +9,9 @@ export default class typeOrmConfig {
     return {
       type: 'postgres',
       host: configService.get('POSTGRES_HOST'),
-      username: configService.get('DB_USERNAME'),
-      port: configService.get('DB_PORT'),
-      password: configService.get('DB_PASSWORD'),
-      database: configService.get('DB_NAME'),
+      username: configService.get('POSTGRES_USER'),
+      password: configService.get('POSTGRES_PASSWORD'),
+      database: configService.get('POSTGRES_DATABASE'),
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: false,
       logging: false,
