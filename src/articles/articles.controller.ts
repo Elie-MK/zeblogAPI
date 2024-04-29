@@ -2,13 +2,15 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Request,
 import { ArticlesService } from './articles.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ArticleDto } from './dto/article.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('api')
+@ApiTags('Articles')
+@Controller('articles')
 export class ArticlesController {
     constructor(private readonly articleService:ArticlesService){}
 
     @UseGuards(AuthGuard)
-    @Post('articles')
+    @Post('create')
     async createArticle(@Body() articleDto:ArticleDto, @Request() req){
         articleDto.user= req.user
         return await this.articleService.createArticle(articleDto)

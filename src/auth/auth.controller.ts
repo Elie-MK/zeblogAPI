@@ -22,12 +22,16 @@ import { classToPlain } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Users } from './entities/user.entity';
 
-
-@Controller('api')
+@ApiTags('User')
+@Controller('user')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiResponse({status:201, description: 'User created successfully'})
+  @ApiBadRequestResponse({description: 'User can not register, try again'})
   @Post('/register')
   @UseInterceptors(FileInterceptor('pictureProfile', {
     storage:diskStorage({
@@ -40,9 +44,7 @@ export class AuthController {
       }
     })
   }))
-  async create(@Body() createUserDto: CreateUserDto, @UploadedFile() file:Express.Multer.File) {
-    //  console.log("file", file.path);
-    
+  async create(@Body() createUserDto: CreateUserDto, @UploadedFile() file:Express.Multer.File) {    
       return await this.authService.createUser(createUserDto, file.path);
   }
 

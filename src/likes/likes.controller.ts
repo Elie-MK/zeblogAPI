@@ -2,8 +2,10 @@ import { Body, Controller, Param, ParseIntPipe, Post, Put, Request, UseGuards } 
 import { LikesService } from './likes.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { likeDto } from './dtos/likeDto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('api')
+@ApiTags('Likes')
+@Controller('like')
 export class LikesController {
     constructor(private readonly likesService: LikesService) {}
 
