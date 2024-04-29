@@ -23,10 +23,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Users } from './entities/user.entity';
 
 @ApiTags('User')
-@Controller('api')
+@Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
