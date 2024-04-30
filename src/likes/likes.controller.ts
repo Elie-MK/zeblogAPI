@@ -5,7 +5,7 @@ import { likeDto } from './dtos/likeDto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Likes')
-@Controller('like')
+@Controller('api')
 export class LikesController {
     constructor(private readonly likesService: LikesService) {}
 

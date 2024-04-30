@@ -5,7 +5,7 @@ import { ArticleDto } from './dto/article.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Articles')
-@Controller('articles')
+@Controller('api/articles')
 export class ArticlesController {
     constructor(private readonly articleService:ArticlesService){}
 
