@@ -18,7 +18,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto, filePath:string ): Promise<Users> {
+  async createUser(createUserDto: CreateUserDto ): Promise<Users> {
     const findUser = await this.userRepository.findOne({
       where: {
         username: createUserDto.username,
@@ -27,7 +27,7 @@ export class AuthService {
     if (!findUser) {
       const salt = bcrypt.genSaltSync();
       createUserDto.password = bcrypt.hashSync(createUserDto.password, salt);
-      createUserDto.pictureProfile = filePath;
+      createUserDto.pictureProfile = "";
       createUserDto.email.toLocaleLowerCase();
       const user = this.userRepository.create(createUserDto);
       return await this.userRepository.save(user);

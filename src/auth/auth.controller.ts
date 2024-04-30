@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
@@ -11,17 +10,12 @@ import {
   Post,
   Put,
   Request,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
 import { classToPlain } from 'class-transformer';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('User')
@@ -32,19 +26,19 @@ export class AuthController {
   @ApiResponse({status:201, description: 'User created successfully'})
   @ApiBadRequestResponse({description: 'User can not register, try again'})
   @Post('/register')
-  @UseInterceptors(FileInterceptor('pictureProfile', {
-    storage:diskStorage({
-      destination:'./files',
-      filename : (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        const ext = extname(file.originalname)
-        const fileName = `${uniqueSuffix}${ext}`
-        cb(null, fileName )
-      }
-    })
-  }))
-  async create(@Body() createUserDto: CreateUserDto, @UploadedFile() file:Express.Multer.File) {    
-      return await this.authService.createUser(createUserDto, file.path);
+  // @UseInterceptors(FileInterceptor('pictureProfile', {
+  //   storage:diskStorage({
+  //     destination:'./files',
+  //     filename : (req, file, cb) => {
+  //       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+  //       const ext = extname(file.originalname)
+  //       const fileName = `${uniqueSuffix}${ext}`
+  //       cb(null, fileName )
+  //     }
+  //   })
+  // }))
+  async create(@Body() createUserDto: CreateUserDto) {    
+      return await this.authService.createUser(createUserDto);
   }
 
   @Post('/login')
