@@ -16,7 +16,7 @@ import { typeOrmConfigAsync } from './config/typeorm.config';
     ArticlesModule,
     CommentsModule,
     LikesModule,
-    MulterModule.register({ dest: './uploads' }),
+    MulterModule.register({ dest: 'files' }),
   ],
 })
 export class AppModule {}
