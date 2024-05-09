@@ -9,23 +9,16 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { PutObjectCommand, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
-import { ConfigService } from '@nestjs/config';
+import { UploadService } from 'src/upload/upload.service';
 
 @Injectable()
 export class AuthService {
 
-  private region: string; 
-  private s3Client: S3Client;
-
   constructor(
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
     private readonly jwtService: JwtService,
-    private  readonly configService: ConfigService, 
+    private readonly uploadService: UploadService
   ) { 
-    this.region = this.configService.get<string>('AWS_S3_REGION') 
-    this.s3Client = new S3Client({
-      region:this.region})
   }
 
   async createUser(createUserDto: CreateUserDto, file: Express.Multer.File  ): Promise<Users> {
@@ -35,26 +28,14 @@ export class AuthService {
         username: createUserDto.username,
       },
     });
-    console.log(file);
-    
-
-    const bucket = this.configService.get<string>('AWS_S3_BUCKET_NAME');
-    const namefile = `${file.fieldname}${Date.now()}`; 
-    
-    const input:PutObjectCommandInput = {
-      Body: file.buffer, 
-      Bucket: bucket,
-      Key:namefile, 
-      ContentType: file.mimetype,
-      ACL: 'public-read'
-    }
-
-    await this.s3Client.send(new PutObjectCommand(input))
  
+    const key = `${file.fieldname}${Date.now()}`
+    const imageUrl = await this.uploadService.uploadFile(file, key)
+
     if (!findUser) {
       const salt = bcrypt.genSaltSync();
       createUserDto.password = bcrypt.hashSync(createUserDto.password, salt);
-      createUserDto.pictureProfile = `https:\\${bucket}.s3.${this.region}.amazonaws.com/${namefile}` ;
+      createUserDto.pictureProfile =imageUrl ;
       const user = this.userRepository.create(createUserDto);
       return await this.userRepository.save(user);
     } else {

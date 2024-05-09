@@ -10,6 +10,7 @@ import {
   Param,
   ParseFilePipe,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Request,
@@ -23,20 +24,19 @@ import { AuthGuard } from './auth.guard';
 import { classToPlain } from 'class-transformer';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadService } from 'src/upload/upload.service';
 
 @ApiTags('User')
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly uploadService : UploadService) {}
 
  
   @ApiResponse({status:201, description: 'User created successfully'})
   @ApiBadRequestResponse({description: 'User can not register, try again'})
   @UseInterceptors(FileInterceptor('pictureProfile'))
   @Post('/register')
-  async create(@Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {
-    // console.log(file);
-       
+  async create(@Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {       
     return await this.authService.createUser(createUserDto, file);
   }
 
@@ -134,4 +134,6 @@ export class AuthController {
     const result = this.authService.modifyPassword( user.idUser, createUserDto)
     return result
   }
+
+
 }
