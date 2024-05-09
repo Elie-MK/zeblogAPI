@@ -24,14 +24,12 @@ import { AuthGuard } from './auth.guard';
 import { classToPlain } from 'class-transformer';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadService } from 'src/upload/upload.service';
 
 @ApiTags('User')
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly uploadService : UploadService) {}
+  constructor(private readonly authService: AuthService) {}
 
- 
   @ApiResponse({status:201, description: 'User created successfully'})
   @ApiBadRequestResponse({description: 'User can not register, try again'})
   @UseInterceptors(FileInterceptor('pictureProfile'))

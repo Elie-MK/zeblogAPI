@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
 import { CommentsModule } from './comments/comments.module';
 import { LikesModule } from './likes/likes.module';
-import { MulterModule } from '@nestjs/platform-express';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { UploadModule } from './upload/upload.module';
 
@@ -17,6 +16,7 @@ import { UploadModule } from './upload/upload.module';
     ArticlesModule,
     CommentsModule,
     LikesModule,
+    UploadModule
   ],
 })
 export class AppModule {}
