@@ -24,6 +24,8 @@ import { AuthGuard } from './auth.guard';
 import { classToPlain } from 'class-transformer';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JWTTokenDto } from './dto/jwtToken.dto';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('User')
 @Controller('api/auth')
@@ -39,9 +41,14 @@ export class AuthController {
   }
 
   @Post('/login')
-  async login(@Body() createUserDto: CreateUserDto) {
-      const result = await this.authService.login(createUserDto);
-      return result;
+  async login(@Body() loginDto: LoginDto) {
+      return await this.authService.login(loginDto);
+      
+  }
+
+  @Post('/refresh-token')
+  async refreshToken(@Body() {refreshToken}:JWTTokenDto){
+    return await this.authService.refreshToken(refreshToken);
   }
 
   @UseGuards(AuthGuard)

@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,32 +11,37 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UploadService } from 'src/upload/upload.service';
+import { ConfigService } from '@nestjs/config';
+import { JWTTokenDto } from './dto/jwtToken.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-
+ 
   constructor(
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
     private readonly jwtService: JwtService,
-    private readonly uploadService: UploadService
-  ) { 
-  }
+    private readonly uploadService: UploadService,
+    private configService: ConfigService,
+  ) {}
 
-  async createUser(createUserDto: CreateUserDto, file: Express.Multer.File  ): Promise<Users> {
-    
+  async createUser(
+    createUserDto: CreateUserDto,
+    file: Express.Multer.File,
+  ): Promise<Users> {
     const findUser = await this.userRepository.findOne({
       where: {
         username: createUserDto.username,
       },
     });
- 
-    const key = `${file.fieldname}${Date.now()}`
-    const imageUrl = await this.uploadService.uploadFile(file, key)
+
+    const key = `${file.fieldname}${Date.now()}`;
+    const imageUrl = await this.uploadService.uploadFile(file, key);
 
     if (!findUser) {
       const salt = bcrypt.genSaltSync();
       createUserDto.password = bcrypt.hashSync(createUserDto.password, salt);
-      createUserDto.pictureProfile =imageUrl ;
+      createUserDto.pictureProfile = imageUrl;
       const user = this.userRepository.create(createUserDto);
       return await this.userRepository.save(user);
     } else {
@@ -43,41 +49,79 @@ export class AuthService {
     }
   }
 
-  async login(createUserDto: CreateUserDto) {
-    try {
+  async login(loginDto: LoginDto): Promise<JWTTokenDto> {
+    const {email, username,  password} = loginDto
+
       const user = await this.userRepository.findOne({
-        where: [{
-          username: createUserDto.username 
-        }, {email:createUserDto.email}],
-        relations: ['articles'],
+        where: [
+          {
+            username: username,
+          },
+          { email: email },
+        ]
       });
-
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new HttpException('Invalid credentials', 400)
       }
-
       const isPasswordValid = bcrypt.compareSync(
-        createUserDto.password,
+        password,
         user.password,
       );
 
-      if (user && isPasswordValid) {
-        const payload = {
+      if (!isPasswordValid) {
+        throw new HttpException('Invalid credentials', 400)
+      }
+      return this.getTokens(user)
+  }
+
+  private async getTokens(user: LoginDto): Promise<JWTTokenDto> {
+    const [token, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+            idUser: user.idUser,
+            username: user.username,
+            email: user.email,
+            gender: user.gender
+        },
+        {
+          secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+          expiresIn: this.configService.get<string>(
+            'JWT_ACCESS_TOKEN_EXPIRATION',
+          ),
+        },
+      ),
+
+      this.jwtService.signAsync(
+        {
           idUser: user.idUser,
           username: user.username,
           email: user.email,
           gender: user.gender,
-          pictureProfile: user.pictureProfile,
-          createAt: user.createAt,
-          articles: user.articles,
-        };
-        return {
-          access_token: this.jwtService.sign(payload),
-        };
-      } 
-    } catch (error) {
-      throw new NotFoundException('Wrong password or Username');
-    }
+        },
+        {
+          secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+          expiresIn: this.configService.get<string>(
+            'JWT_REFRESH_TOKEN_EXPIRATION',
+          ),
+        },
+      ),
+    ]);
+    return {
+      token,
+      refreshToken,
+    };
+  }
+
+  async refreshToken(token: string): Promise<JWTTokenDto> {
+   try {
+    const { idUser, username, email, gender} = await this.jwtService.verifyAsync(token, {
+      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET')
+    })
+    const user = await this.userRepository.findOneOrFail({where: {idUser, username, email, gender}})
+    return this.getTokens(user)
+   } catch (error) {
+    throw new HttpException('Invalid credentials', 400)
+   }
   }
 
   async findUser() {
