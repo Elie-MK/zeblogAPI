@@ -3,12 +3,9 @@ import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/comments/entities/comments.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
+import { GenderEnum } from '../Enums/genderEnum';
+import { RoleEnum } from '../Enums/roleEnum';
 
-export enum GenderEnum {
-  MALE = "male",
-  FEMALE = "female",
-  NONE = "none"
-}
 
 @Entity()
 export class Users {
@@ -47,6 +44,10 @@ export class Users {
   @ApiProperty()
   @Column({ type: "enum", enum: GenderEnum, default:GenderEnum.NONE })
   gender: GenderEnum;
+
+  @ApiProperty()
+  @Column({ type: "enum", enum: RoleEnum, default:RoleEnum.USER })
+  role: RoleEnum;
 
   @ApiProperty()
   @Column({ type: 'varchar', nullable:false  })

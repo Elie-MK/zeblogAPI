@@ -7,7 +7,8 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { GenderEnum } from '../entities/user.entity';
+import { GenderEnum } from '../Enums/genderEnum';
+import { RoleEnum } from '../Enums/roleEnum';
 
 export class LoginDto {
   @ApiProperty()
@@ -34,4 +35,12 @@ export class LoginDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty()
+  @IsString()
+  pictureProfile: string;
+
+  @ApiProperty()
+  @IsString()
+  role:RoleEnum
 }
