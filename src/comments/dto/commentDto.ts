@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsDate, IsNotEmpty, IsNotEmptyObject, IsNumber, IsString } from "class-validator"
+import { IsDate,  IsNotEmptyObject, IsNumber, IsString } from "class-validator"
 import { ArticleDto } from "src/articles/dto/article.dto"
-import { CreateUserDto } from "src/auth/dto/create-user.dto"
+import { UserDto } from "src/auth/dto/user.dto"
 
 export class CommentDto{
     @ApiProperty()
@@ -18,7 +18,7 @@ export class CommentDto{
 
     @ApiProperty()
     @IsNotEmptyObject()
-    idUser:CreateUserDto
+    idUser:UserDto
     
     @ApiProperty()  
     @IsNotEmptyObject()

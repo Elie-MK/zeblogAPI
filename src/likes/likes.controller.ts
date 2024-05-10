@@ -1,6 +1,6 @@
 import { Body, Controller, Param, ParseIntPipe, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { LikesService } from './likes.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { likeDto } from './dtos/likeDto';
 import { ApiTags } from '@nestjs/swagger';
 

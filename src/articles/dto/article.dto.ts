@@ -1,7 +1,6 @@
 import { IsArray, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
-import { CreateUserDto } from "src/auth/dto/create-user.dto";
+import { UserDto } from "src/auth/dto/user.dto";
 import { CommentDto } from "src/comments/dto/commentDto";
-import { LikeEnum } from "src/likes/entities/likes.entity";
 import { CategorieEnum } from "../Enums/CategorieEnum";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -24,7 +23,7 @@ export class ArticleDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    user:CreateUserDto
+    user:UserDto
 
     @ApiProperty()
     @IsArray()

@@ -2,15 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  HttpStatus,
-  MaxFileSizeValidator,
-  NotFoundException,
   Param,
-  ParseFilePipe,
   ParseIntPipe,
-  ParseUUIDPipe,
   Post,
   Put,
   Request,
@@ -19,28 +13,30 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { AuthGuard } from './auth.guard';
-import { classToPlain } from 'class-transformer';
+import { UserDto } from './dto/user.dto';
+import { AuthGuard } from './guards/auth.guard';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JWTTokenDto } from './dto/jwtToken.dto';
 import { LoginDto } from './dto/login.dto';
+import { Role } from './decorators/role';
+import { RoleGuard } from './guards/autorization.guard';
+import { RoleEnum } from './Enums/roleEnum';
 
 @ApiTags('User')
-@Controller('api/auth')
+@Controller('api')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiResponse({status:201, description: 'User created successfully'})
   @ApiBadRequestResponse({description: 'User can not register, try again'})
   @UseInterceptors(FileInterceptor('pictureProfile'))
-  @Post('/register')
-  async create(@Body() createUserDto: CreateUserDto, @UploadedFile() file: Express.Multer.File) {       
-    return await this.authService.createUser(createUserDto, file);
+  @Post('/auth/register')
+  async create(@Body() userDto: UserDto, @UploadedFile() file: Express.Multer.File) {       
+    return await this.authService.createUser(userDto, file);
   }
 
-  @Post('/login')
+  @Post('/auth/login')
   async login(@Body() loginDto: LoginDto) {
       return await this.authService.login(loginDto);
       
@@ -51,94 +47,60 @@ export class AuthController {
     return await this.authService.refreshToken(refreshToken);
   }
 
-  @UseGuards(AuthGuard)
+  @Role(RoleEnum.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('/users')
   async findUser() {
-    const users = this.authService.findUser();
-    if (!users) {
-      throw new Error('Users not found');
-    }
-    return users;
+    return this.authService.findUser();
   }
 
 
-  @UseGuards(AuthGuard)
+  @Role(RoleEnum.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('/users/:id')
   async findByIdUser(@Param('id', ParseIntPipe) id: number) {
-    try {
-      const user = this.authService.findByIdUser(id);
-      if (!user) {
-        throw new NotFoundException('User Not Found');
-      }
-      return user;
-    } catch (error) {
-      return {
-        message: 'Internal server error',
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
+      return this.authService.findByIdUser(id);
   }
 
-  @UseGuards(AuthGuard)
+  @Role(RoleEnum.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete('/users/:id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
-    try {
-      const user = this.authService.deleteUser(id);
-      if (!user) {
-        throw new NotFoundException('User Not Found');
-      }
-      return console.log('User deleted succefully');
-    } catch (error) {
-      return {
-        message: 'Internal server error',
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
+    return this.authService.deleteUser(id);
   }
 
-  @UseGuards(AuthGuard)
+  @Role(RoleEnum.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Put('/users/:id')
   async modifyUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() createUserDto: CreateUserDto,
+    @Body() userDto: UserDto,
   ) {
-    try {
-      const user = this.authService.modifyUser(id, createUserDto);
-      if (!user) {
-        throw new NotFoundException('User Not Found');
-      }
-      return user;
-    } catch (error) {
-      return {
-        message: 'Internal server error',
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
+     return this.authService.modifyUser(id, userDto);
   }
 
   @UseGuards(AuthGuard)
   @Get('/profile')
   async getProfile(@Request() req){
     const user = req.user
-    return classToPlain(user, { excludePrefixes: ['_'] });
+    return this.authService.getUserProfile(user.idUser);
 
   }
 
   @UseGuards(AuthGuard)
   @Put('/profile')
- async modifyProfile(@Request() req, @Body() createUserDto: CreateUserDto, ){
+ async modifyProfile(@Request() req, @Body() userDto: UserDto, ){
     const user = req.user
-    const result = this.authService.modifyCurrentUser( user.idUser, createUserDto)
+    const result = this.authService.modifyCurrentUser( user.idUser, userDto)
     return result
   }
 
   @UseGuards(AuthGuard)
   @Put('/profile/password')
-  async modifyPassword(@Request() req, @Body() createUserDto: CreateUserDto, ){
+  async modifyPassword(@Request() req, @Body() userDto: UserDto, ){
     const user = req.user
-    const result = this.authService.modifyPassword( user.idUser, createUserDto)
+    const result = this.authService.modifyPassword( user.idUser, userDto)
     return result
   }
-
 
 }

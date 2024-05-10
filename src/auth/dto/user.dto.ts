@@ -10,14 +10,13 @@ import {
   MinLength,
 } from 'class-validator';
 import { ArticleDto } from 'src/articles/dto/article.dto';
-import { GenderEnum } from '../entities/user.entity';
-import { LikeEnum } from 'src/likes/entities/likes.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { GenderEnum } from '../Enums/genderEnum';
 
 const passwordRegEx =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,20}$/;
 
-export class CreateUserDto {
+export class UserDto {
   @ApiProperty()
   @IsInt()
   idUser: number;
