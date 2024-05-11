@@ -1,5 +1,5 @@
 export enum LikeEnum {
-  Like = 'like',
-  Dislike = 'dislike',
-  Neutral = 'neutral',
+  LIKE= 'LIKE',
+  DISLIKE = 'DISLIKE',
+  NEUTRAL = 'NEUTRAL',
 }

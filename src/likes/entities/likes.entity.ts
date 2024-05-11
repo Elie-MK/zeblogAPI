@@ -22,7 +22,7 @@ export class Likes {
   @Column({ type: 'int' })
   idArticles: number;
 
-  @Column({ type: 'enum', enum: LikeEnum, default: LikeEnum.Neutral })
+  @Column({ type: 'enum', enum: LikeEnum, default: LikeEnum.NEUTRAL })
   likeStatus: LikeEnum;
 
   @ManyToOne(() => Articles, (art) => art.likes)
