@@ -10,8 +10,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-
-@Entity({name:"likes"})
+@Entity({ name: 'likes' })
 @Unique(['idUser', 'idArticles'])
 export class Likes {
   @PrimaryGeneratedColumn()

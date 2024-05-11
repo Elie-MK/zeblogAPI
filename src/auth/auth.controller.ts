@@ -39,7 +39,6 @@ export class AuthController {
     return await this.authService.createUser(userDto, file);
   }
 
-  
   @ApiResponse({ status: 201, description: 'Connected' })
   @ApiBadRequestResponse({ description: 'Invalid credentials' })
   @Post('/auth/login')

@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { CategorieEnum } from '../../shared/Enums/categorieEnum';
 
-@Entity({name:"article"})
+@Entity({ name: 'article' })
 export class Articles {
   @PrimaryGeneratedColumn()
   idArticles: number;

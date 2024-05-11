@@ -6,7 +6,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { GenderEnum } from '../../shared/Enums/genderEnum';
 import { RoleEnum } from '../../shared/Enums/roleEnum';
 
-@Entity({name:"users"})
+@Entity({ name: 'users' })
 export class Users {
   @ApiProperty()
   @PrimaryGeneratedColumn()
