@@ -8,14 +8,9 @@ export default class typeOrmConfig {
   static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
     return {
       type: 'postgres',
-      url: configService.get('POSTGRES_URL'),
-      // host: configService.get('POSTGRES_HOST'),
-      // username: configService.get('POSTGRES_USER'),
-      // password: configService.get('POSTGRES_PASSWORD'),
-      // database: configService.get('POSTGRES_DATABASE'),
+      url: configService.get<string>('POSTGRES_URL'),
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      synchronize: true,
-      logging: true,
+      synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
     };
   }
 }
