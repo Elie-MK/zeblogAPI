@@ -29,7 +29,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiResponse({ status: 201, description: 'User created successfully' })
-  @ApiBadRequestResponse({ description: 'User can not register, try again' })
+  @ApiBadRequestResponse({ description: 'Invalid credentials' })
   @UseInterceptors(FileInterceptor('pictureProfile'))
   @Post('/auth/register')
   async create(
@@ -39,6 +39,9 @@ export class AuthController {
     return await this.authService.createUser(userDto, file);
   }
 
+  
+  @ApiResponse({ status: 201, description: 'Connected' })
+  @ApiBadRequestResponse({ description: 'Invalid credentials' })
   @Post('/auth/login')
   async login(@Body() loginDto: LoginDto) {
     return await this.authService.login(loginDto);
