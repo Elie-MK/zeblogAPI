@@ -7,8 +7,8 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { GenderEnum } from '../Enums/genderEnum';
-import { RoleEnum } from '../Enums/roleEnum';
+import { GenderEnum } from '../../shared/Enums/genderEnum';
+import { RoleEnum } from '../../shared/Enums/roleEnum';
 
 export class LoginDto {
   @ApiProperty()

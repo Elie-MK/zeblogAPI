@@ -8,9 +8,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategorieEnum } from '../Enums/CategorieEnum';
+import { CategorieEnum } from '../../shared/Enums/categorieEnum';
 
-@Entity()
+@Entity({name:"article"})
 export class Articles {
   @PrimaryGeneratedColumn()
   idArticles: number;

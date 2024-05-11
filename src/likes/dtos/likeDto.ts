@@ -1,8 +1,8 @@
 import { IsNumber } from 'class-validator';
-import { LikeEnum } from '../entities/likes.entity';
 import { UserDto } from 'src/auth/dto/user.dto';
 import { ArticleDto } from 'src/articles/dto/article.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { LikeEnum } from 'src/shared/Enums/likeEnum';
 
 export class likeDto {
   @ApiProperty()

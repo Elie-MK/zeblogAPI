@@ -3,10 +3,10 @@ import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/comments/entities/comments.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { GenderEnum } from '../Enums/genderEnum';
-import { RoleEnum } from '../Enums/roleEnum';
+import { GenderEnum } from '../../shared/Enums/genderEnum';
+import { RoleEnum } from '../../shared/Enums/roleEnum';
 
-@Entity()
+@Entity({name:"users"})
 export class Users {
   @ApiProperty()
   @PrimaryGeneratedColumn()

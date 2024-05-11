@@ -2,7 +2,7 @@ import { Articles } from 'src/articles/entities/articles.entity';
 import { Users } from 'src/auth/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({name:"comments"})
 export class Comments {
   @PrimaryGeneratedColumn()
   idComments: number;

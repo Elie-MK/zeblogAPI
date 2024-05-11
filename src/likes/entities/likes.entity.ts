@@ -1,5 +1,6 @@
 import { Articles } from 'src/articles/entities/articles.entity';
 import { Users } from 'src/auth/entities/user.entity';
+import { LikeEnum } from 'src/shared/Enums/likeEnum';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,13 +10,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-export enum LikeEnum {
-  Like = 'like',
-  Dislike = 'dislike',
-  Neutral = 'neutral',
-}
 
-@Entity()
+@Entity({name:"likes"})
 @Unique(['idUser', 'idArticles'])
 export class Likes {
   @PrimaryGeneratedColumn()

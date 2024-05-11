@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ArticleDto } from 'src/articles/dto/article.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { GenderEnum } from '../Enums/genderEnum';
+import { GenderEnum } from '../../shared/Enums/genderEnum';
 
 const passwordRegEx =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,20}$/;

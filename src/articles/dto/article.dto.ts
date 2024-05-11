@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { UserDto } from 'src/auth/dto/user.dto';
 import { CommentDto } from 'src/comments/dto/commentDto';
-import { CategorieEnum } from '../Enums/CategorieEnum';
+import { CategorieEnum } from '../../shared/Enums/categorieEnum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ArticleDto {

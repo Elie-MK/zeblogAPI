@@ -21,7 +21,7 @@ import { JWTTokenDto } from './dto/jwtToken.dto';
 import { LoginDto } from './dto/login.dto';
 import { Role } from './decorators/role';
 import { RoleGuard } from './guards/autorization.guard';
-import { RoleEnum } from './Enums/roleEnum';
+import { RoleEnum } from '../shared/Enums/roleEnum';
 
 @ApiTags('User')
 @Controller('api')

@@ -11,6 +11,7 @@ export default class typeOrmConfig {
       url: configService.get<string>('POSTGRES_URL'),
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
+      logging: configService.get<boolean>('DB_LOGGING'),
     };
   }
 }
