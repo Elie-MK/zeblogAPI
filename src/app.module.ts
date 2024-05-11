@@ -16,7 +16,7 @@ import { UploadModule } from './upload/upload.module';
     ArticlesModule,
     CommentsModule,
     LikesModule,
-    UploadModule
+    UploadModule,
   ],
 })
 export class AppModule {}

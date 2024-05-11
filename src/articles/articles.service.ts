@@ -1,8 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
-  Request,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,14 +13,10 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
-  
   ) {}
 
   async createArticle(articleDto: ArticleDto) {
- 
-    const article = this.articlesRepository.create(
-     articleDto
-    );
+    const article = this.articlesRepository.create(articleDto);
     await this.articlesRepository.save(article);
     return article;
   }
@@ -41,7 +35,6 @@ export class ArticlesService {
           email: user.email,
           pictureProfile: user.pictureProfile,
           createAt: user.createAt,
-          
         },
       }));
 

@@ -28,22 +28,24 @@ import { RoleEnum } from './Enums/roleEnum';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiResponse({status:201, description: 'User created successfully'})
-  @ApiBadRequestResponse({description: 'User can not register, try again'})
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiBadRequestResponse({ description: 'User can not register, try again' })
   @UseInterceptors(FileInterceptor('pictureProfile'))
   @Post('/auth/register')
-  async create(@Body() userDto: UserDto, @UploadedFile() file: Express.Multer.File) {       
+  async create(
+    @Body() userDto: UserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     return await this.authService.createUser(userDto, file);
   }
 
   @Post('/auth/login')
   async login(@Body() loginDto: LoginDto) {
-      return await this.authService.login(loginDto);
-      
+    return await this.authService.login(loginDto);
   }
 
   @Post('/refresh-token')
-  async refreshToken(@Body() {refreshToken}:JWTTokenDto){
+  async refreshToken(@Body() { refreshToken }: JWTTokenDto) {
     return await this.authService.refreshToken(refreshToken);
   }
 
@@ -54,12 +56,11 @@ export class AuthController {
     return this.authService.findUser();
   }
 
-
   @Role(RoleEnum.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   @Get('/users/:id')
   async findByIdUser(@Param('id', ParseIntPipe) id: number) {
-      return this.authService.findByIdUser(id);
+    return this.authService.findByIdUser(id);
   }
 
   @Role(RoleEnum.ADMIN)
@@ -76,31 +77,29 @@ export class AuthController {
     @Param('id', ParseIntPipe) id: number,
     @Body() userDto: UserDto,
   ) {
-     return this.authService.modifyUser(id, userDto);
+    return this.authService.modifyUser(id, userDto);
   }
 
   @UseGuards(AuthGuard)
   @Get('/profile')
-  async getProfile(@Request() req){
-    const user = req.user
+  async getProfile(@Request() req) {
+    const user = req.user;
     return this.authService.getUserProfile(user.idUser);
-
   }
 
   @UseGuards(AuthGuard)
   @Put('/profile')
- async modifyProfile(@Request() req, @Body() userDto: UserDto, ){
-    const user = req.user
-    const result = this.authService.modifyCurrentUser( user.idUser, userDto)
-    return result
+  async modifyProfile(@Request() req, @Body() userDto: UserDto) {
+    const user = req.user;
+    const result = this.authService.modifyCurrentUser(user.idUser, userDto);
+    return result;
   }
 
   @UseGuards(AuthGuard)
   @Put('/profile/password')
-  async modifyPassword(@Request() req, @Body() userDto: UserDto, ){
-    const user = req.user
-    const result = this.authService.modifyPassword( user.idUser, userDto)
-    return result
+  async modifyPassword(@Request() req, @Body() userDto: UserDto) {
+    const user = req.user;
+    const result = this.authService.modifyPassword(user.idUser, userDto);
+    return result;
   }
-
 }

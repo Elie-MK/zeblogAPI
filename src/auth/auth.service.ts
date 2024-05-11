@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  HttpException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -24,6 +19,13 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
+  calculateAge(dateOfBirth: Date): number {
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    return age;
+  }
+
   async createUser(
     userDto: UserDto,
     file: Express.Multer.File,
@@ -31,11 +33,18 @@ export class AuthService {
     const findUser = await this.userRepository.findOne({
       where: {
         username: userDto.username,
+        email: userDto.email,
       },
     });
 
     const key = `${file.fieldname}${Date.now()}`;
     const imageUrl = await this.uploadService.uploadFile(file, key);
+
+    const age = this.calculateAge(userDto.dateOfBirth);
+
+    if (age < 18) {
+      throw new HttpException('You must be 18 years old to register', 400);
+    }
 
     if (!findUser) {
       const salt = bcrypt.genSaltSync();
@@ -44,7 +53,7 @@ export class AuthService {
       const user = this.userRepository.create(userDto);
       return await this.userRepository.save(user);
     } else {
-      throw new ConflictException('User already exists');
+      throw new HttpException('Invalid credentials', 400);
     }
   }
 
@@ -75,9 +84,9 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           idUser: user.idUser,
-          email:user.email, 
-          gender:user.gender,
-          picture:user.pictureProfile,
+          email: user.email,
+          gender: user.gender,
+          picture: user.pictureProfile,
           username: user.username,
           role: user.role,
         },
@@ -92,9 +101,9 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           idUser: user.idUser,
-          email:user.email, 
-          gender:user.gender,
-          picture:user.pictureProfile,
+          email: user.email,
+          gender: user.gender,
+          picture: user.pictureProfile,
           username: user.username,
           role: user.role,
         },
@@ -129,7 +138,7 @@ export class AuthService {
   async findUser() {
     try {
       const users = await this.userRepository.find();
-      const sanitizedUsers = users.map((user:UserDto) => ({
+      const sanitizedUsers = users.map((user: UserDto) => ({
         id: user.idUser,
         username: user.username,
         gender: user.gender,
@@ -148,14 +157,25 @@ export class AuthService {
       const user = await this.userRepository.findOne({
         where: { idUser: id },
         relations: ['articles'],
-        select:['idUser', 'username', 'articles', 'comments', 
-      'countryName', 'createAt', 'dateOfBirth', 
-      'email', 'fullName', 'gender', 'likes', 'pictureProfile', 'streetAdress'
-    ] 
+        select: [
+          'idUser',
+          'username',
+          'articles',
+          'comments',
+          'countryName',
+          'createAt',
+          'dateOfBirth',
+          'email',
+          'fullName',
+          'gender',
+          'likes',
+          'pictureProfile',
+          'streetAdress',
+        ],
       });
 
       if (!user) {
-        throw new HttpException('Invalid credentials', 400);      
+        throw new HttpException('Invalid credentials', 400);
       }
       return user;
     } catch (error) {
@@ -183,20 +203,31 @@ export class AuthService {
     return await this.userRepository.update(id, userDto);
   }
 
-  async getUserProfile(id:number){
-    const user = await this.userRepository.findOne({ 
-      where: { idUser: id }, 
+  async getUserProfile(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { idUser: id },
       relations: ['articles', 'comments', 'likes'],
-      select:['idUser', 'username', 'articles', 'comments', 
-      'countryName', 'createAt', 'dateOfBirth', 
-      'email', 'fullName', 'gender', 'likes', 'pictureProfile', 'streetAdress'
-    ] 
+      select: [
+        'idUser',
+        'username',
+        'articles',
+        'comments',
+        'countryName',
+        'createAt',
+        'dateOfBirth',
+        'email',
+        'fullName',
+        'gender',
+        'likes',
+        'pictureProfile',
+        'streetAdress',
+      ],
     });
     if (!user) {
       throw new HttpException('Invalid credentials', 400);
     }
-  
-    return user
+
+    return user;
   }
 
   async modifyCurrentUser(reqId, userDto: UserDto) {

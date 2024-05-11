@@ -26,7 +26,7 @@ export class UserDto {
   @MinLength(4)
   @IsString()
   fullName: string;
-  
+
   @ApiProperty()
   @IsDate()
   dateOfBirth: Date;
@@ -70,14 +70,13 @@ export class UserDto {
 
   @ApiProperty()
   @IsString()
-  gender:GenderEnum
+  gender: GenderEnum;
 
   @ApiProperty()
   @IsArray()
   articles: ArticleDto[];
-  
+
   @ApiProperty()
   @IsDate()
   createAt: Date;
-
 }

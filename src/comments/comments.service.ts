@@ -12,18 +12,20 @@ export class CommentsService {
     @InjectRepository(Articles) private readonly articles: Repository<Articles>,
   ) {}
 
-  async createComment(idArticles:number, commentDto: CommentDto) {
-    const article = await this.articles.findOne({where:{idArticles:idArticles}});
+  async createComment(idArticles: number, commentDto: CommentDto) {
+    const article = await this.articles.findOne({
+      where: { idArticles: idArticles },
+    });
     if (!article) {
       throw new BadRequestException('Article not found');
     }
-    commentDto.articles = article; 
+    commentDto.articles = article;
     const newComment = this.comment.create(commentDto);
     await this.comment.save(newComment);
     return newComment;
   }
 
-  async findByIdComments(id:number){
-    return await this.comment.findOne({where:{idComments:id}});
+  async findByIdComments(id: number) {
+    return await this.comment.findOne({ where: { idComments: id } });
   }
 }

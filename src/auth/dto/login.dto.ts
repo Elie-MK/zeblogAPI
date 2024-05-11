@@ -42,5 +42,5 @@ export class LoginDto {
 
   @ApiProperty()
   @IsString()
-  role:RoleEnum
+  role: RoleEnum;
 }

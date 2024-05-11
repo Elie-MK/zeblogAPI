@@ -7,8 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { UploadService } from 'src/upload/upload.service';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Users]),  JwtModule.register({global:true})],
+  imports: [
+    TypeOrmModule.forFeature([Users]),
+    JwtModule.register({ global: true }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService, UploadService]
+  providers: [AuthService, UploadService],
 })
 export class AuthModule {}

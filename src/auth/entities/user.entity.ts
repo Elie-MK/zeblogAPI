@@ -2,10 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/comments/entities/comments.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { GenderEnum } from '../Enums/genderEnum';
 import { RoleEnum } from '../Enums/roleEnum';
-
 
 @Entity()
 export class Users {
@@ -14,58 +13,58 @@ export class Users {
   idUser: number;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, unique:true,nullable:false })
+  @Column({ type: 'varchar', length: 25, unique: true, nullable: false })
   fullName: string;
 
   @ApiProperty()
-  @Column({ type: 'timestamp',})
+  @Column({ type: 'timestamp' })
   dateOfBirth: Date;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, unique:true,nullable:false })
+  @Column({ type: 'varchar', length: 25, unique: true, nullable: false })
   username: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, unique:true,nullable:false })
+  @Column({ type: 'varchar', length: 25, unique: true, nullable: false })
   email: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, nullable:false })
+  @Column({ type: 'varchar', length: 25, nullable: false })
   countryName: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, })
+  @Column({ type: 'varchar', length: 25 })
   streetAdress: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar',nullable:false})
+  @Column({ type: 'varchar', nullable: false })
   password: string;
 
   @ApiProperty()
-  @Column({ type: "enum", enum: GenderEnum, default:GenderEnum.NONE })
+  @Column({ type: 'enum', enum: GenderEnum, default: GenderEnum.NONE })
   gender: GenderEnum;
 
   @ApiProperty()
-  @Column({ type: "enum", enum: RoleEnum, default:RoleEnum.USER })
+  @Column({ type: 'enum', enum: RoleEnum, default: RoleEnum.USER })
   role: RoleEnum;
 
   @ApiProperty()
-  @Column({ type: 'varchar', nullable:false  })
+  @Column({ type: 'varchar', nullable: false })
   pictureProfile: string;
-  
+
   @ApiProperty()
-  @Column({ type:'timestamp', default:()=>'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createAt: Date;
 
   @ApiProperty()
-  @OneToMany(()=>Articles, art => art.user)
-  articles:Articles[]
+  @OneToMany(() => Articles, (art) => art.user)
+  articles: Articles[];
 
   @ApiProperty()
-  @OneToMany(()=>Comments, com => com.idUser)
-  comments:Comments[]
+  @OneToMany(() => Comments, (com) => com.idUser)
+  comments: Comments[];
 
   @ApiProperty()
-  @OneToMany(()=>Likes, like => like.user)
-  likes:Likes[]
+  @OneToMany(() => Likes, (like) => like.user)
+  likes: Likes[];
 }

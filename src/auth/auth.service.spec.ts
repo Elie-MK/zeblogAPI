@@ -15,4 +15,12 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('calculateAge', () => {
+    it('Should return 18 old', () => {
+      const age = service.calculateAge(new Date('2003-01-01'));
+
+      expect(age).toBe(18);
+    });
+  });
 });
