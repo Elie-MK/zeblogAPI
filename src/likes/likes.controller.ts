@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LikesService } from './likes.service';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { likeDto } from './dtos/likeDto';
 import { ApiTags } from '@nestjs/swagger';
 

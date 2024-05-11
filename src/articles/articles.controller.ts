@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { ArticleDto } from './dto/article.dto';
 import { ApiTags } from '@nestjs/swagger';
 

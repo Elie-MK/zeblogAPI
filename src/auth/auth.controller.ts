@@ -14,13 +14,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from './dto/user.dto';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from '../shared/guards/auth.guard';
 import { ApiBadRequestResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JWTTokenDto } from './dto/jwtToken.dto';
 import { LoginDto } from './dto/login.dto';
-import { Role } from './decorators/role';
-import { RoleGuard } from './guards/autorization.guard';
+import { Role } from '../shared/decorators/role';
+import { RoleGuard } from '../shared/guards/autorization.guard';
 import { RoleEnum } from '../shared/Enums/roleEnum';
 
 @ApiTags('User')
