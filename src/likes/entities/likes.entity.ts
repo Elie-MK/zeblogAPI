@@ -1,6 +1,6 @@
 import { Articles } from 'src/articles/entities/articles.entity';
 import { Users } from 'src/auth/entities/user.entity';
-import { LikeEnum } from 'src/shared/Enums/likeEnum';
+import { LikeEnum } from '../../shared/Enums/likeEnum';
 import {
   Entity,
   PrimaryGeneratedColumn,
