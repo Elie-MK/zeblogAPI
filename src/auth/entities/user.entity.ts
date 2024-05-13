@@ -13,7 +13,7 @@ export class Users {
   idUser: number;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, unique: true, nullable: false })
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   fullName: string;
 
   @ApiProperty()
@@ -21,19 +21,19 @@ export class Users {
   dateOfBirth: Date;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, unique: true, nullable: false })
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   username: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, unique: true, nullable: false })
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   email: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25, nullable: false })
+  @Column({ type: 'varchar', length: 200, nullable: false })
   countryName: string;
 
   @ApiProperty()
-  @Column({ type: 'varchar', length: 25 })
+  @Column({ type: 'varchar', length: 200 })
   streetAdress: string;
 
   @ApiProperty()
