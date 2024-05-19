@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -7,18 +8,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Articles } from './entities/articles.entity';
 import { Repository } from 'typeorm';
 import { ArticleDto } from './dto/article.dto';
+import { UploadService } from 'src/upload/upload.service';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectRepository(Articles)
     private readonly articlesRepository: Repository<Articles>,
+    private readonly uploadService: UploadService,
   ) {}
 
-  async createArticle(articleDto: ArticleDto) {
-    const article = this.articlesRepository.create(articleDto);
-    await this.articlesRepository.save(article);
-    return article;
+  async createArticle(articleDto: ArticleDto, file: Express.Multer.File) {
+    try {
+      const key = `${file.fieldname}${Date.now()}`;
+      const imageUrl = await this.uploadService.uploadFile(file, key);
+      articleDto.pictures = imageUrl;
+      const article = this.articlesRepository.create(articleDto);
+      await this.articlesRepository.save(article);
+      return article;
+    } catch (error) {
+      throw new HttpException('Invalid credentials', 400);
+    }
   }
 
   async findAllArticlesWithUsers() {
