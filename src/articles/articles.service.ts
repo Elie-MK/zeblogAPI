@@ -34,6 +34,7 @@ export class ArticlesService {
   async findAllArticlesWithUsers() {
     const articleWithUser = await this.articlesRepository.find({
       relations: ['user', 'comments', 'likes'],
+      order: { idArticles: 'DESC' },
     });
 
     if (articleWithUser) {
@@ -52,10 +53,33 @@ export class ArticlesService {
     }
   }
 
+  async findArticleByCategory() {
+    try {
+      const articles = await this.articlesRepository.find({
+        order: { idArticles: 'DESC' },
+      });
+
+      const articlesByCategory = articles.reduce((acc, article) => {
+        const category = article.category || 'Uncategorized';
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(article);
+        return acc;
+      }, {});
+
+      return articlesByCategory;
+    } catch (error) {
+      console.error('Error fetching articles by category:', error);
+      throw new Error('Could not fetch articles by category');
+    }
+  }
+
   async findArticleByUser(req) {
     try {
       const article = await this.articlesRepository.find({
         relations: ['user'],
+        order: { idArticles: 'DESC' },
       });
 
       const articleByUser = article.filter(

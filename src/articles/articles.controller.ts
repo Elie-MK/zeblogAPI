@@ -26,9 +26,13 @@ export class ArticlesController {
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('pictures'))
   @Post('/create')
-  async createArticle(@Body() articleDto: ArticleDto, @Request() req, @UploadedFile() file: Express.Multer.File) {
+  async createArticle(
+    @Body() articleDto: ArticleDto,
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     articleDto.user = req.user;
-    return await this.articleService.createArticle(articleDto, file);    
+    return await this.articleService.createArticle(articleDto, file);
   }
 
   @UseGuards(AuthGuard)
@@ -53,6 +57,11 @@ export class ArticlesController {
   @Get('/all')
   async findAllArticle() {
     return this.articleService.findAllArticlesWithUsers();
+  }
+
+  @Get('/category')
+  async findByCategory() {
+    return await this.articleService.findArticleByCategory();
   }
 
   @UseGuards(AuthGuard)
