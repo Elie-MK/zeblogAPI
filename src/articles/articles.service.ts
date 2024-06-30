@@ -56,10 +56,21 @@ export class ArticlesService {
   async findArticleByCategory() {
     try {
       const articles = await this.articlesRepository.find({
+        relations: ['user'],
         order: { idArticles: 'DESC' },
       });
+      const articlesWithUser = articles.map(({ user, ...rest }) => ({
+        ...rest,
+        user: {
+          idUser: user.idUser,
+          username: user.username,
+          email: user.email,
+          pictureProfile: user.pictureProfile,
+          createAt: user.createAt,
+        },
+      }));
 
-      const articlesByCategory = articles.reduce((acc, article) => {
+      const articlesByCategory = articlesWithUser.reduce((acc, article) => {
         const category = article.category || 'Uncategorized';
         if (!acc[category]) {
           acc[category] = [];

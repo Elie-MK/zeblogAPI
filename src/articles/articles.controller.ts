@@ -59,6 +59,7 @@ export class ArticlesController {
     return this.articleService.findAllArticlesWithUsers();
   }
 
+  @UseGuards(AuthGuard)
   @Get('/category')
   async findByCategory() {
     return await this.articleService.findArticleByCategory();
