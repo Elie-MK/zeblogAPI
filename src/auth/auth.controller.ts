@@ -90,6 +90,12 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('/writers')
+  async getWriters() {
+    return this.authService.getWriters();
+  }
+
+  @UseGuards(AuthGuard)
   @Put('/profile')
   async modifyProfile(@Request() req, @Body() userDto: UserDto) {
     const user = req.user;

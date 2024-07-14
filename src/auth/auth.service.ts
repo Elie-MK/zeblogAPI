@@ -9,6 +9,7 @@ import { UploadService } from 'src/upload/upload.service';
 import { ConfigService } from '@nestjs/config';
 import { JWTTokenDto } from './dto/jwtToken.dto';
 import { LoginDto } from './dto/login.dto';
+import { RoleEnum } from 'src/shared/Enums/roleEnum';
 
 @Injectable()
 export class AuthService {
@@ -265,5 +266,17 @@ export class AuthService {
         return await this.userRepository.update(reqId, dataUser);
       }
     } catch (error) {}
+  }
+
+  async getWriters() {
+    try {
+      const writers = await this.userRepository.find({
+        where: { role: RoleEnum.USER },
+        select: ['idUser', 'username', 'email', 'pictureProfile', 'createAt'],
+      });
+      return writers;
+    } catch (error) {
+      throw new HttpException('Invalid credentials', 400);
+    }
   }
 }
