@@ -272,7 +272,14 @@ export class AuthService {
     try {
       const writers = await this.userRepository.find({
         where: { role: RoleEnum.USER },
-        select: ['idUser', 'username', 'email', 'pictureProfile', 'createAt'],
+        select: [
+          'idUser',
+          'username',
+          'fullName',
+          'email',
+          'pictureProfile',
+          'createAt',
+        ],
       });
       return writers;
     } catch (error) {
