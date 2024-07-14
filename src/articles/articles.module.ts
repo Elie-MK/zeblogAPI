@@ -8,6 +8,6 @@ import { UploadService } from 'src/upload/upload.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Articles])],
   controllers: [ArticlesController],
-  providers: [ArticlesService,  UploadService],
+  providers: [ArticlesService, UploadService],
 })
 export class ArticlesModule {}
