@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNotEmptyObject, IsNumber, IsString } from 'class-validator';
 import { ArticleDto } from 'src/articles/dto/article.dto';
@@ -13,12 +14,16 @@ export class CommentDto {
   contents: string;
 
   @ApiProperty()
+  @IsNumber()
+  articleId: number;
+
+  @ApiProperty()
   @IsDate()
   createAt: Date;
 
   @ApiProperty()
   @IsNotEmptyObject()
-  idUser: UserDto;
+  user: UserDto;
 
   @ApiProperty()
   @IsNotEmptyObject()

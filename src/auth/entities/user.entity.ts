@@ -61,7 +61,7 @@ export class Users {
   articles: Articles[];
 
   @ApiProperty()
-  @OneToMany(() => Comments, (com) => com.idUser)
+  @OneToMany(() => Comments, (com) => com.user)
   comments: Comments[];
 
   @ApiProperty()

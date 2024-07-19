@@ -10,11 +10,14 @@ export class Comments {
   @Column('varchar')
   contents: string;
 
+  @Column('int')
+  articleId: number;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createAt: Date;
 
   @ManyToOne(() => Users, (user) => user.comments)
-  idUser: Users;
+  user: Users;
 
   @ManyToOne(() => Articles, (art) => art.comments)
   articles: Articles;

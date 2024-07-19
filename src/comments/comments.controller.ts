@@ -25,7 +25,7 @@ export class CommentsController {
     @Body() commentDto: CommentDto,
     @Request() req,
   ) {
-    commentDto.idUser = req.user;
+    commentDto.user = req.user;
     return await this.commentService.createComment(articleId, commentDto);
   }
 
@@ -33,5 +33,13 @@ export class CommentsController {
   @Get('articles/comments/:idArticle')
   async findByIdComments(@Param('idArticle', ParseIntPipe) articleId: number) {
     return await this.commentService.findByIdComments(articleId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('article/comments/:idArticle')
+  async findCommentsByArticle(
+    @Param('idArticle', ParseIntPipe) articleId: number,
+  ) {
+    return await this.commentService.findCommentsByArticle(articleId);
   }
 }
