@@ -5,13 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UploadService } from 'src/upload/upload.service';
+import { ZohoService } from 'src/zoho/zoho.service';
+import { ZohoOAuthToken } from 'src/zoho/entity/zoho.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([Users, ZohoOAuthToken]),
     JwtModule.register({ global: true }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UploadService],
+  providers: [AuthService, UploadService, ZohoService],
 })
 export class AuthModule {}
