@@ -123,9 +123,9 @@ export class ZohoService {
   async createNewLead({ email, fullName }: UserDto) {
     try {
       const findToken = await this.zohoAuthRepository.findOne({
-        where: { id: 2 },
+        where: { id: 1 },
       });
-      let token_access = findToken.access_token;
+      let token_access: string;
       if (
         findToken &&
         this.isTokenExpired(findToken.createAt, findToken.expiry_time)
@@ -137,6 +137,10 @@ export class ZohoService {
           data.access_token,
         );
 
+        token_access = data.access_token;
+      } else {
+        const { data } = await this.generateZohoToken();
+        this.log.debug('Token generated', data);
         token_access = data.access_token;
       }
       const body = {

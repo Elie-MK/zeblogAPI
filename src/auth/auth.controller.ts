@@ -89,7 +89,6 @@ export class AuthController {
     return this.authService.getUserProfile(user.idUser);
   }
 
-  @UseGuards(AuthGuard)
   @Get('/writers')
   async getWriters() {
     return this.authService.getWriters();

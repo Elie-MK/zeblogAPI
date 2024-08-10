@@ -1,4 +1,9 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -14,6 +19,7 @@ import { ZohoService } from 'src/zoho/zoho.service';
 
 @Injectable()
 export class AuthService {
+  log = new Logger();
   constructor(
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
     private readonly jwtService: JwtService,
@@ -55,6 +61,7 @@ export class AuthService {
       userDto.pictureProfile = imageUrl;
       this.zohoService.createNewLead(userDto);
       const user = this.userRepository.create(userDto);
+      this.log.debug(`User with username : ${user.username} has been created`);
       return await this.userRepository.save(user);
     } else {
       throw new HttpException('Invalid credentials', 400);
@@ -215,12 +222,12 @@ export class AuthService {
         'idUser',
         'username',
         'articles',
+        'fullName',
         'comments',
         'countryName',
         'createAt',
         'dateOfBirth',
         'email',
-        'fullName',
         'gender',
         'likes',
         'pictureProfile',
