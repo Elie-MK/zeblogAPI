@@ -13,8 +13,7 @@ import { ArticleDto } from 'src/articles/dto/article.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { GenderEnum } from '../../shared/Enums/genderEnum';
 
-const passwordRegEx =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,20}$/;
+const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,20}$/;
 
 export class UserDto {
   @ApiProperty()

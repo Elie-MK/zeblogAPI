@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
@@ -9,6 +10,7 @@ export default class typeOrmConfig {
     return {
       type: 'postgres',
       url: configService.get<string>('POSTGRES_URL'),
+      password: configService.get<string>('POSTGRES_PASSWORD'),
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
       logging: configService.get<boolean>('DB_LOGGING'),
