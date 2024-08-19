@@ -95,10 +95,20 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('pictureProfile'))
   @Put('/profile')
-  async modifyProfile(@Request() req, @Body() userDto: UserDto) {
+  async modifyProfile(
+    @Request() req,
+    @Body() userDto: UserDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
     const user = req.user;
-    const result = this.authService.modifyCurrentUser(user.idUser, userDto);
+
+    const result = this.authService.modifyCurrentUser(
+      user.idUser,
+      userDto,
+      file,
+    );
     return result;
   }
 

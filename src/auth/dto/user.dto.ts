@@ -69,6 +69,22 @@ export class UserDto {
 
   @ApiProperty()
   @IsString()
+  description?: string;
+
+  @ApiProperty()
+  @IsString()
+  facebookLink?: string;
+
+  @ApiProperty()
+  @IsString()
+  XLink?: string;
+
+  @ApiProperty()
+  @IsString()
+  InstagramLink?: string;
+
+  @ApiProperty()
+  @IsString()
   gender: GenderEnum;
 
   @ApiProperty()
