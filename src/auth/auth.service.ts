@@ -51,19 +51,25 @@ export class AuthService {
 
     const age = this.calculateAge(userDto.dateOfBirth);
 
-    if (age < 18) {
-      throw new HttpException('You must be 18 years old to register', 400);
-    }
+    try {
+      if (age < 18) {
+        throw new HttpException('You must be 18 years old to register', 400);
+      }
 
-    if (!findUser) {
-      const salt = bcrypt.genSaltSync();
-      userDto.password = bcrypt.hashSync(userDto.password, salt);
-      userDto.pictureProfile = imageUrl;
-      this.zohoService.createNewLead(userDto);
-      const user = this.userRepository.create(userDto);
-      this.log.debug(`User with username : ${user.username} has been created`);
-      return await this.userRepository.save(user);
-    } else {
+      if (!findUser) {
+        const salt = bcrypt.genSaltSync();
+        userDto.password = bcrypt.hashSync(userDto.password, salt);
+        userDto.pictureProfile = imageUrl;
+        this.zohoService.createNewLead(userDto);
+        const user = this.userRepository.create(userDto);
+        this.log.debug(
+          `User with username : ${user.username} has been created`,
+        );
+        return await this.userRepository.save(user);
+      } else {
+        throw new HttpException('Invalid credentials', 400);
+      }
+    } catch (error) {
       throw new HttpException('Invalid credentials', 400);
     }
   }
@@ -232,6 +238,10 @@ export class AuthService {
         'likes',
         'pictureProfile',
         'streetAdress',
+        'description',
+        'InstagramLink',
+        'XLink',
+        'facebookLink',
       ],
     });
     if (!user) {
@@ -241,18 +251,24 @@ export class AuthService {
     return user;
   }
 
-  async modifyCurrentUser(reqId, userDto: UserDto) {
+  async modifyCurrentUser(reqId, userDto: UserDto, file: Express.Multer.File) {
     try {
+      if (file) {
+        const key = `${file.fieldname}${Date.now()}`;
+        const imageUrl = await this.uploadService.uploadFile(file, key);
+        userDto.pictureProfile = imageUrl;
+      }
       const userFind = await this.userRepository.findOne({
         where: { idUser: reqId },
       });
       if (userFind) {
-        const dataUser = {
-          username: userDto.username,
-          email: userDto.email,
+        const updatedUser = {
+          ...userFind,
+          ...userDto,
         };
 
-        return await this.userRepository.update(reqId, dataUser);
+        await this.userRepository.update(reqId, updatedUser);
+        this.log.debug('user field(s)', userDto, 'was modified');
       } else {
         throw new NotFoundException(`User with ID ${reqId} not found`);
       }
@@ -289,7 +305,9 @@ export class AuthService {
           'email',
           'pictureProfile',
           'createAt',
+          'articles',
         ],
+        relations: ['articles'],
       });
       return writers;
     } catch (error) {
