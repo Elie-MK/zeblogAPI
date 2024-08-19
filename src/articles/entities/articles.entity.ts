@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CategorieEnum } from '../../shared/Enums/categorieEnum';
+import { favoriteArticle } from 'src/favorite-article/entities/favoriteArticle.entity';
 
 @Entity({ name: 'article' })
 export class Articles {
@@ -38,4 +39,7 @@ export class Articles {
 
   @OneToMany(() => Likes, (like) => like.article)
   likes: Likes[];
+
+  @OneToMany(() => favoriteArticle, (fav) => fav.article)
+  favoriteArticles: favoriteArticle[];
 }

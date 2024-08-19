@@ -5,6 +5,7 @@ import { Likes } from 'src/likes/entities/likes.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { GenderEnum } from '../../shared/Enums/genderEnum';
 import { RoleEnum } from '../../shared/Enums/roleEnum';
+import { favoriteArticle } from 'src/favorite-article/entities/favoriteArticle.entity';
 
 @Entity({ name: 'users' })
 export class Users {
@@ -53,6 +54,22 @@ export class Users {
   pictureProfile: string;
 
   @ApiProperty()
+  @Column({ type: 'varchar', nullable: true })
+  description?: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', nullable: true })
+  facebookLink?: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', nullable: true })
+  XLink?: string;
+
+  @ApiProperty()
+  @Column({ type: 'varchar', nullable: true })
+  InstagramLink?: string;
+
+  @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createAt: Date;
 
@@ -67,4 +84,8 @@ export class Users {
   @ApiProperty()
   @OneToMany(() => Likes, (like) => like.user)
   likes: Likes[];
+
+  @ApiProperty()
+  @OneToMany(() => favoriteArticle, (fav) => fav.user)
+  favoriteArticles: favoriteArticle[];
 }
