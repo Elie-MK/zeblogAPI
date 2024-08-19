@@ -5,20 +5,22 @@ import { ConfigModule } from '@nestjs/config';
 import { ArticlesModule } from './articles/articles.module';
 import { CommentsModule } from './comments/comments.module';
 import { LikesModule } from './likes/likes.module';
-import { typeOrmConfigAsync } from './config/typeorm.config';
 import { UploadModule } from './upload/upload.module';
 import { ZohoModule } from './zoho/zoho.module';
+import { dataSourceOptions } from 'db/data-source';
+import { FavoriteArticleModule } from './favorite-article/favorite-article.module';
 
 @Module({
   imports: [
     AuthModule,
-    TypeOrmModule.forRootAsync(typeOrmConfigAsync),
+    TypeOrmModule.forRoot(dataSourceOptions),
     ConfigModule.forRoot({ isGlobal: true }),
     ArticlesModule,
     CommentsModule,
     LikesModule,
     UploadModule,
     ZohoModule,
+    FavoriteArticleModule,
   ],
 })
 export class AppModule {}
