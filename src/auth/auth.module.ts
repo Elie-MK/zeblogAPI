@@ -7,10 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { UploadService } from 'src/upload/upload.service';
 import { ZohoService } from 'src/zoho/zoho.service';
 import { ZohoOAuthToken } from 'src/zoho/entity/zoho.entity';
+import { Articles } from 'src/articles/entities/articles.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, ZohoOAuthToken]),
+    TypeOrmModule.forFeature([Users, ZohoOAuthToken, Articles]),
     JwtModule.register({ global: true }),
   ],
   controllers: [AuthController],

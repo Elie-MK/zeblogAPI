@@ -1,8 +1,10 @@
 import {
   HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
@@ -16,12 +18,15 @@ import { JWTTokenDto } from './dto/jwtToken.dto';
 import { LoginDto } from './dto/login.dto';
 import { RoleEnum } from 'src/shared/Enums/roleEnum';
 import { ZohoService } from 'src/zoho/zoho.service';
+import { Articles } from 'src/articles/entities/articles.entity';
 
 @Injectable()
 export class AuthService {
   log = new Logger();
   constructor(
     @InjectRepository(Users) private readonly userRepository: Repository<Users>,
+    @InjectRepository(Articles)
+    private readonly articleRepository: Repository<Articles>,
     private readonly jwtService: JwtService,
     private readonly uploadService: UploadService,
     private readonly zohoService: ZohoService,
@@ -138,9 +143,22 @@ export class AuthService {
     };
   }
 
+  async verifyToken(token: string) {
+    try {
+      const decoded = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      });
+      this.log.debug('Token decoded', decoded);
+      return { valid: true, decoded };
+    } catch (error) {
+      this.log.error('token invalid', error);
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
+
   async refreshToken(token: string): Promise<JWTTokenDto> {
     try {
-      const { idUser: idUser } = await this.jwtService.verifyAsync(token, {
+      const { idUser } = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
       const user = await this.userRepository.findOneOrFail({
@@ -148,7 +166,25 @@ export class AuthService {
       });
       return this.getTokens(user);
     } catch (error) {
-      throw new HttpException('Invalid credentials', 400);
+      this.log.debug('refresh token error', error);
+      if (
+        error.message.includes('invalid signature') ||
+        error.message.includes('expired')
+      ) {
+        throw new HttpException(
+          'Invalid or expired refresh token',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      if (error.message.includes('not found')) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      throw new HttpException(
+        'Refresh token processing error',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -310,6 +346,31 @@ export class AuthService {
         relations: ['articles'],
       });
       return writers;
+    } catch (error) {
+      throw new HttpException('Invalid credentials', 400);
+    }
+  }
+
+  async setFavoriteArticle(userId: number, articleId: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { idUser: userId },
+        relations: ['articles'],
+      });
+      if (user) {
+        const article = await this.articleRepository.findOne({
+          where: { idArticles: articleId },
+        });
+        if (article) {
+          this.log.debug(' article found ', article);
+          user.favoriteArticles = [...user.favoriteArticles, article];
+          return await this.userRepository.save(user);
+        } else {
+          throw new HttpException('Article not found', 404);
+        }
+      } else {
+        throw new HttpException('Invalid credentials', 400);
+      }
     } catch (error) {
       throw new HttpException('Invalid credentials', 400);
     }

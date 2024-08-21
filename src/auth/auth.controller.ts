@@ -3,11 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Request,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -26,6 +28,7 @@ import { RoleEnum } from '../shared/Enums/roleEnum';
 @ApiTags('User')
 @Controller('api')
 export class AuthController {
+  log = new Logger();
   constructor(private readonly authService: AuthService) {}
 
   @ApiResponse({ status: 201, description: 'User created successfully' })
@@ -48,7 +51,31 @@ export class AuthController {
 
   @Post('/refresh-token')
   async refreshToken(@Body() { refreshToken }: JWTTokenDto) {
+    if (!refreshToken) {
+      this.log.debug('Refresh Token not provided');
+      throw new UnauthorizedException('Refresh Token not provided');
+    }
     return await this.authService.refreshToken(refreshToken);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/set-favorite-article/:articleId')
+  async setFavoriteArticle(
+    @Param('articleId', ParseIntPipe) articleId: number,
+    @Request() req,
+  ) {
+    const userId = req.user.idUser;
+    return await this.authService.setFavoriteArticle(userId, articleId);
+  }
+
+  @Get('/verify-token')
+  async verifyToken(@Request() req) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      this.log.debug('Token not provided');
+      throw new UnauthorizedException('Token not provided');
+    }
+    return await this.authService.verifyToken(token);
   }
 
   @Role(RoleEnum.ADMIN)
