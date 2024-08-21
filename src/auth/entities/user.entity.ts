@@ -2,10 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Articles } from 'src/articles/entities/articles.entity';
 import { Comments } from 'src/comments/entities/comments.entity';
 import { Likes } from 'src/likes/entities/likes.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { GenderEnum } from '../../shared/Enums/genderEnum';
 import { RoleEnum } from '../../shared/Enums/roleEnum';
-import { favoriteArticle } from 'src/favorite-article/entities/favoriteArticle.entity';
 
 @Entity({ name: 'users' })
 export class Users {
@@ -85,7 +91,7 @@ export class Users {
   @OneToMany(() => Likes, (like) => like.user)
   likes: Likes[];
 
-  @ApiProperty()
-  @OneToMany(() => favoriteArticle, (fav) => fav.user)
-  favoriteArticles: favoriteArticle[];
+  @ManyToMany(() => Articles, (article) => article.usersFavorited)
+  @JoinTable({ name: 'favorite_article' })
+  favoriteArticles: Articles[];
 }

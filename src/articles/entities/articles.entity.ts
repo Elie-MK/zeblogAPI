@@ -4,12 +4,12 @@ import { Likes } from 'src/likes/entities/likes.entity';
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CategorieEnum } from '../../shared/Enums/categorieEnum';
-import { favoriteArticle } from 'src/favorite-article/entities/favoriteArticle.entity';
 
 @Entity({ name: 'article' })
 export class Articles {
@@ -40,6 +40,6 @@ export class Articles {
   @OneToMany(() => Likes, (like) => like.article)
   likes: Likes[];
 
-  @OneToMany(() => favoriteArticle, (fav) => fav.article)
-  favoriteArticles: favoriteArticle[];
+  @ManyToMany(() => Users, (user) => user.favoriteArticles)
+  usersFavorited: Users[];
 }

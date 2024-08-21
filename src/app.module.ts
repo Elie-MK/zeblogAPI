@@ -8,7 +8,6 @@ import { LikesModule } from './likes/likes.module';
 import { UploadModule } from './upload/upload.module';
 import { ZohoModule } from './zoho/zoho.module';
 import { dataSourceOptions } from 'db/data-source';
-import { FavoriteArticleModule } from './favorite-article/favorite-article.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { FavoriteArticleModule } from './favorite-article/favorite-article.modul
     LikesModule,
     UploadModule,
     ZohoModule,
-    FavoriteArticleModule,
   ],
 })
 export class AppModule {}
