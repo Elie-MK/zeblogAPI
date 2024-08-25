@@ -7,7 +7,7 @@ import { CommentsModule } from './comments/comments.module';
 import { LikesModule } from './likes/likes.module';
 import { UploadModule } from './upload/upload.module';
 import { ZohoModule } from './zoho/zoho.module';
-import { dataSourceOptions } from 'db/data-source';
+import { dataSourceOptions } from './db/data-source';
 
 @Module({
   imports: [

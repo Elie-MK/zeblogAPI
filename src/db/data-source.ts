@@ -10,7 +10,7 @@ export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   url: configService.get<string>('POSTGRES_URL'),
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: ['dist/db/migrations/*.js'],
+  migrations: ['dist/src/db/migrations/*.js'],
   synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
   logging: configService.get<boolean>('DB_LOGGING'),
 };
