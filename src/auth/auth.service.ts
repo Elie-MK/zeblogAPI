@@ -1,10 +1,10 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
@@ -148,11 +148,10 @@ export class AuthService {
       const decoded = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
       });
-      this.log.debug('Token decoded', decoded);
       return { valid: true, decoded };
     } catch (error) {
       this.log.error('token invalid', error);
-      throw new UnauthorizedException('Invalid token');
+      throw new BadRequestException('Invalid token');
     }
   }
 
@@ -259,25 +258,26 @@ export class AuthService {
   async getUserProfile(id: number) {
     const user = await this.userRepository.findOne({
       where: { idUser: id },
-      relations: ['articles', 'comments', 'likes'],
+      relations: ['articles', 'comments', 'likes', 'favoriteArticles'],
       select: [
         'idUser',
         'username',
-        'articles',
         'fullName',
-        'comments',
         'countryName',
         'createAt',
         'dateOfBirth',
         'email',
         'gender',
-        'likes',
         'pictureProfile',
         'streetAdress',
         'description',
         'InstagramLink',
         'XLink',
         'facebookLink',
+        'comments',
+        'likes',
+        'articles',
+        'favoriteArticles',
       ],
     });
     if (!user) {
@@ -353,26 +353,49 @@ export class AuthService {
 
   async setFavoriteArticle(userId: number, articleId: number) {
     try {
+      // Find the user with their favorite articles
       const user = await this.userRepository.findOne({
         where: { idUser: userId },
-        relations: ['articles'],
+        relations: ['favoriteArticles'],
       });
-      if (user) {
-        const article = await this.articleRepository.findOne({
-          where: { idArticles: articleId },
-        });
-        if (article) {
-          this.log.debug(' article found ', article);
-          user.favoriteArticles = [...user.favoriteArticles, article];
-          return await this.userRepository.save(user);
-        } else {
-          throw new HttpException('Article not found', 404);
-        }
-      } else {
-        throw new HttpException('Invalid credentials', 400);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
       }
+
+      // Find the article
+      const article = await this.articleRepository.findOne({
+        where: { idArticles: articleId },
+      });
+
+      if (!article) {
+        throw new NotFoundException('Article not found');
+      }
+
+      // Check if the article is already in the user's favorites
+      const isFavorite = user.favoriteArticles.some(
+        (favArticle) => favArticle.idArticles === articleId,
+      );
+
+      if (!isFavorite) {
+        user.favoriteArticles.push(article);
+      } else {
+        user.favoriteArticles = user.favoriteArticles.filter(
+          (favArticle) => favArticle.idArticles !== articleId,
+        );
+      }
+
+      // Save the updated user entity
+      await this.userRepository.save(user);
+
+      return {
+        message: isFavorite
+          ? 'Favorite article removed successfully'
+          : 'Favorite article added successfully',
+      };
     } catch (error) {
-      throw new HttpException('Invalid credentials', 400);
+      // Propagate error if something goes wrong
+      throw new HttpException(error.message, error.status || 500);
     }
   }
 }
