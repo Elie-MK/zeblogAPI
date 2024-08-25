@@ -17,7 +17,6 @@ import { ConfigService } from '@nestjs/config';
 import { JWTTokenDto } from './dto/jwtToken.dto';
 import { LoginDto } from './dto/login.dto';
 import { RoleEnum } from 'src/shared/Enums/roleEnum';
-import { ZohoService } from 'src/zoho/zoho.service';
 import { Articles } from 'src/articles/entities/articles.entity';
 
 @Injectable()
@@ -29,7 +28,6 @@ export class AuthService {
     private readonly articleRepository: Repository<Articles>,
     private readonly jwtService: JwtService,
     private readonly uploadService: UploadService,
-    private readonly zohoService: ZohoService,
     private configService: ConfigService,
   ) {}
 
@@ -65,7 +63,6 @@ export class AuthService {
         const salt = bcrypt.genSaltSync();
         userDto.password = bcrypt.hashSync(userDto.password, salt);
         userDto.pictureProfile = imageUrl;
-        this.zohoService.createNewLead(userDto);
         const user = this.userRepository.create(userDto);
         this.log.debug(
           `User with username : ${user.username} has been created`,
